@@ -2,7 +2,8 @@
 
 #include <string>
 #include <fstream>
-#include <vector>
+
+#include <block.hpp>
 #include <pixel.hpp>
 
 namespace input_reader {
