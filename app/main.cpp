@@ -18,6 +18,6 @@ int main(int argc, char** argv)
 
     std::vector<std::vector<Pixel>> image = inreader.get_image();
 
-    encoder::encode();
+    encoder::Encoder();
 
 }

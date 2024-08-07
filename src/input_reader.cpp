@@ -5,15 +5,14 @@
 
 namespace input_reader{
 
-    static std::vector<std::vector<Pixel>> load_image(std::ifstream* input_stream,
+    static Image load_image(std::ifstream* input_stream,
                                                       TGA_header tga_head);
     static bool ends_with(const std::string& full_string, const std::string& ending);
 
-    std::vector<std::vector<Pixel>> load_image(std::ifstream* input_stream,
+    Image load_image(std::ifstream* input_stream,
                                                TGA_header tga_head)
     {
-        std::vector<std::vector<Pixel>> image(tga_head.height,
-                                              std::vector<Pixel>(tga_head.width));
+        Image image(tga_head.height,std::vector<Pixel>(tga_head.width));
 
         for(int i = 0; i < tga_head.height; i++) {
             for(int j = 0; j < tga_head.width; j++) {
@@ -66,7 +65,7 @@ namespace input_reader{
 
     }
 
-    std::vector<std::vector<Pixel>> InReader::get_image() {
+    Image InReader::get_image() {
         return image;
     }
 }
