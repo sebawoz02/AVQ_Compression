@@ -10,7 +10,7 @@ namespace heuristic {
         double mse(Block* block1, Block* block2);
     }
 
-    using idh_t = Dictionary* (*)(ColorMap*);
+    using idh_t = Dictionary* (*)(std::vector<std::vector<uint8_t>>&);
 
     using gpuh_t = void (*)(std::vector<Growing_point*>& growing_points, size_t* size);
 
