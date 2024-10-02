@@ -1,6 +1,7 @@
 #include <encoder.hpp>
 #include <growing_point.hpp>
 #include <cmath>
+#include <output_writer.hpp>
 
 namespace encoder {
     void Encoder::encode(const std::vector<std::vector<Pixel>>& image)
@@ -28,6 +29,8 @@ namespace encoder {
 
     void Encoder::adaptive_vector_quantization(std::vector<std::vector<uint8_t>>& image)
     {
+        output_writer::OutWriter out_writer(*out_file);
+
         // Add pixel [0, 0] to growing points pool
         auto* init_gp = new Growing_point(0, 0, 1, 1, image);
         std::vector<Growing_point*> gp_pool{};
@@ -52,10 +55,10 @@ namespace encoder {
                     std::floor(log2(static_cast<double>(dict->size))));
 
             // Write common_block_idx to file on log2(dict.size) bits
-            for(uint8_t i = bits_to_transmit - 1; i >= 0; i--)
+            for(int8_t i = bits_to_transmit - 1; i >= 0; i--)
             {
                 bool bit = (common_block_idx >> i) & 1;
-                // TODO: file writer and Write function
+                out_writer.write(bit);
             }
 
             // Update dict
@@ -63,7 +66,7 @@ namespace encoder {
             // Check if dictionary is full and if so use deletion heuristic
             deletion_heur(dict);
             // Update growing points pool
-            growing_point_update_heur(gp_pool, &gpp_size);
+            growing_point_update_heur(gp_pool, &gpp_size, gp);
 
             delete gp;
         }
@@ -84,7 +87,7 @@ namespace encoder {
         for(size_t i = 256; i < dict->size; i++)
         {
             const double match = match_heur(current_gp->block, dict->entries[i]);
-            if(match < tolerance) // TODO: is this the right way to do this??
+            if(match < tolerance) // Is this the right way to do this??
             {
                 *common_block_idx = i;
                 return;

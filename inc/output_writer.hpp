@@ -10,6 +10,8 @@ namespace output_writer {
 
         void write(bool bit);
         void flush_buffer();
+
+        ~OutWriter();
     private:
         std::ofstream& out_stream;
         size_t bit_idx;

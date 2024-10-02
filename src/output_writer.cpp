@@ -22,4 +22,9 @@ namespace output_writer {
         while(bit_idx != 7)
             write(false);   // add 0 to buffer
     }
+
+    OutWriter::~OutWriter() {
+        flush_buffer();
+        out_stream.close();
+    }
 }
