@@ -1,6 +1,8 @@
 #include <heuristics.hpp>
 #include <cmath>
 
+#define DICT_SIZE_LIMIT 512
+
 namespace heuristic {
     // MATCH
     double match::mse(Block *block1, Block *block2)
@@ -74,5 +76,71 @@ namespace heuristic {
     Growing_point* growing::lifo(std::vector<Growing_point*>& gp_pool)
     {
         return gp_pool[gp_pool.size() - 1];
+    }
+
+    // DICT UPDATE
+    void dict_update::one_column(Dictionary *dict, Growing_point *gp, std::vector<std::vector<uint8_t>> &image)
+    {
+        if (gp->y == 0)
+        {
+            auto* b = new Block(gp->block->width, gp->block->height, gp->block->pixels);
+            dict->insert(b);
+            return;
+        }
+        size_t w = gp->block->width;
+        size_t h = gp->block->height + 1;
+
+        std::vector<std::vector<uint8_t>> pixels(std::vector<std::vector<uint8_t>>(w, std::vector<uint8_t>(h, 0)));
+        for (size_t x = 0; x < w ; x++)
+        {
+            pixels[x][0] = image[gp->x + x][gp->y - 1];
+            for (size_t y = 1; y < h; y++)
+            {
+                pixels[x][y] = gp->block->pixels[x][y - 1];
+            }
+        }
+        auto* b = new Block(w, h, pixels);
+        dict->insert(b);
+    }
+
+    void dict_update::one_row(Dictionary *dict, Growing_point *gp, std::vector<std::vector<uint8_t>> &image)
+    {
+        if (gp->x == 0)
+        {
+            auto* b = new Block(gp->block->width, gp->block->height, gp->block->pixels);
+            dict->insert(b);
+            return;
+        }
+        size_t w = gp->block->width + 1;
+        size_t h = gp->block->height;
+
+        std::vector<std::vector<uint8_t>> pixels(std::vector<std::vector<uint8_t>>(w, std::vector<uint8_t>(h, 0)));
+        for (size_t y = 0; y < w ; y++)
+        {
+            pixels[0][y] = image[gp->x - 1][gp->y + y];
+            for (size_t x = 1; x < h; x++)
+            {
+                pixels[x][y] = gp->block->pixels[x - 1][y];
+            }
+        }
+        auto* b = new Block(w, h, pixels);
+        dict->insert(b);
+    }
+
+    void dict_update::one_column_one_row(Dictionary *dict, Growing_point *gp, std::vector<std::vector<uint8_t>> &image)
+    {
+        one_column(dict, gp, image);
+        one_row(dict, gp, image);
+    }
+
+    // DICT DELETION
+    void dict_deletion::fifo(Dictionary* dict)
+    {
+        while(dict->size > DICT_SIZE_LIMIT)
+        {
+            delete dict->entries[256];  // DON'T TOUCH 1x1 blocks
+            dict->entries.erase(dict->entries.begin() + 256);
+            dict->size--;
+        }
     }
 }

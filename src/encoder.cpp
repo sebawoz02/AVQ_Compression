@@ -62,7 +62,7 @@ namespace encoder {
             }
 
             // Update dict
-            dict_update_heur(dict, gp);
+            dict_update_heur(dict, gp, image);
             // Check if dictionary is full and if so use deletion heuristic
             deletion_heur(dict);
             // Update growing points pool
