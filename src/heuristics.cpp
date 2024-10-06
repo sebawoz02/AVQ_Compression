@@ -1,6 +1,7 @@
 #include <heuristics.hpp>
 #include <cmath>
 
+
 #define DICT_SIZE_LIMIT 512
 
 namespace heuristic {
@@ -13,9 +14,8 @@ namespace heuristic {
     }
 
     // DICT INIT
-    Dictionary* dict_init::range_0_to_255(std::vector<std::vector<uint8_t>>& pixels)
+    Dictionary* dict_init::range_0_to_255()
     {
-        (void) pixels;
         auto* dict = new Dictionary();
         for (size_t color = 0; color < 256; color++)
         {
@@ -136,6 +136,7 @@ namespace heuristic {
     // DICT DELETION
     void dict_deletion::fifo(Dictionary* dict)
     {
+        // TODO: FIX THIS logic
         while(dict->size > DICT_SIZE_LIMIT)
         {
             delete dict->entries[256];  // DON'T TOUCH 1x1 blocks

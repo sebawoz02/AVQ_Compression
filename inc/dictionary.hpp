@@ -7,6 +7,7 @@ typedef struct Dictionary {
     std::vector<Block*> entries;
 
     Dictionary();
+    ~Dictionary();
 
     void insert(Block* new_block);
 }Dictionary;

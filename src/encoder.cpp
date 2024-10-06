@@ -39,7 +39,7 @@ namespace encoder {
         size_t gpp_size = 1;
 
         // Init dictionary
-        Dictionary* dict = dict_init_heur(image);
+        Dictionary* dict = dict_init_heur();
 
         // While growing points pool has more elements
         while (gpp_size > 0)

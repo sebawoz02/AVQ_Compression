@@ -20,4 +20,5 @@ int main(int argc, char** argv)
 
     // encoder::Encoder();
 
+    return 0;
 }

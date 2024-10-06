@@ -6,7 +6,7 @@
 namespace heuristic {
     using mh_t = double (*)(Block*, Block*);
 
-    using idh_t = Dictionary* (*)(std::vector<std::vector<uint8_t>>&);
+    using idh_t = Dictionary* (*)();
 
     using gpuh_t = void (*)(std::vector<Growing_point*>&, size_t*, Growing_point*);
 
@@ -21,7 +21,7 @@ namespace heuristic {
     }
 
     namespace dict_init {
-        Dictionary* range_0_to_255(std::vector<std::vector<uint8_t>>& pixels);
+        Dictionary* range_0_to_255();
     }
 
     namespace gp_update {
