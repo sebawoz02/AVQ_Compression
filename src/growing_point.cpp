@@ -15,3 +15,7 @@ Growing_point::Growing_point(size_t _x, size_t _y, size_t width, size_t height, 
 
     block = new Block(width, height, sub_map);
 }
+
+Growing_point::~Growing_point() {
+    delete block;
+}

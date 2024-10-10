@@ -64,7 +64,7 @@ namespace heuristic {
         for (size_t i = 1; i < gp_pool.size(); i++)
         {
             Growing_point* cur = gp_pool[i];
-            if (abs((int)best->x - (int)best->y) > abs((int)cur->x + (int)cur->y))
+            if (abs((int)best->x - (int)best->y) > abs((int)cur->x - (int)cur->y))
             {
                 best = cur;
             }
