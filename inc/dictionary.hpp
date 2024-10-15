@@ -3,11 +3,11 @@
 #include <block.hpp>
 
 typedef struct Dictionary {
-    size_t size;
-    std::vector<Block*> entries;
+  size_t size;
+  std::vector<Block*> entries;
 
-    Dictionary();
-    ~Dictionary();
+  Dictionary();
+  ~Dictionary();
 
-    void insert(Block* new_block);
-}Dictionary;
+  void insert(Block* new_block);
+} Dictionary;
