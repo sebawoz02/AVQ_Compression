@@ -79,16 +79,16 @@ namespace heuristic {
     }
 
     // DICT UPDATE
-    void dict_update::one_column(Dictionary *dict, Growing_point *gp, std::vector<std::vector<uint8_t>> &image)
+    void dict_update::one_column(Dictionary *dict, Block* picked_block, Growing_point* gp, std::vector<std::vector<uint8_t>> &image)
     {
         if (gp->y == 0)
         {
-            auto* b = new Block(gp->block->width, gp->block->height, gp->block->pixels);
+            auto* b = new Block(picked_block->width, picked_block->height, picked_block->pixels);
             dict->insert(b);
             return;
         }
-        size_t w = gp->block->width;
-        size_t h = gp->block->height + 1;
+        size_t w = picked_block->width;
+        size_t h = picked_block->height + 1;
 
         std::vector<std::vector<uint8_t>> pixels(std::vector<std::vector<uint8_t>>(w, std::vector<uint8_t>(h, 0)));
         for (size_t x = 0; x < w ; x++)
@@ -96,23 +96,23 @@ namespace heuristic {
             pixels[x][0] = image[gp->x + x][gp->y - 1];
             for (size_t y = 1; y < h; y++)
             {
-                pixels[x][y] = gp->block->pixels[x][y - 1];
+                pixels[x][y] = picked_block->pixels[x][y - 1];
             }
         }
         auto* b = new Block(w, h, pixels);
         dict->insert(b);
     }
 
-    void dict_update::one_row(Dictionary *dict, Growing_point *gp, std::vector<std::vector<uint8_t>> &image)
+    void dict_update::one_row(Dictionary *dict, Block* picked_block, Growing_point *gp, std::vector<std::vector<uint8_t>> &image)
     {
         if (gp->x == 0)
         {
-            auto* b = new Block(gp->block->width, gp->block->height, gp->block->pixels);
+            auto* b = new Block(picked_block->width, picked_block->height, picked_block->pixels);
             dict->insert(b);
             return;
         }
-        size_t w = gp->block->width + 1;
-        size_t h = gp->block->height;
+        size_t w = picked_block->width + 1;
+        size_t h = picked_block->height;
 
         std::vector<std::vector<uint8_t>> pixels(std::vector<std::vector<uint8_t>>(w, std::vector<uint8_t>(h, 0)));
         for (size_t y = 0; y < w ; y++)
@@ -120,17 +120,17 @@ namespace heuristic {
             pixels[0][y] = image[gp->x - 1][gp->y + y];
             for (size_t x = 1; x < h; x++)
             {
-                pixels[x][y] = gp->block->pixels[x - 1][y];
+                pixels[x][y] = picked_block->pixels[x - 1][y];
             }
         }
         auto* b = new Block(w, h, pixels);
         dict->insert(b);
     }
 
-    void dict_update::one_column_one_row(Dictionary *dict, Growing_point *gp, std::vector<std::vector<uint8_t>> &image)
+    void dict_update::one_column_one_row(Dictionary *dict, Block* picked_block, Growing_point *gp, std::vector<std::vector<uint8_t>> &image)
     {
-        one_column(dict, gp, image);
-        one_row(dict, gp, image);
+        one_column(dict, picked_block, gp, image);
+        one_row(dict, picked_block, gp, image);
     }
 
     // DICT DELETION

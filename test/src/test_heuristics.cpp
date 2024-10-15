@@ -53,10 +53,10 @@ static void test_growing()
 {
     // {1, 2}, {3, 1}, {2, 1}, {0, 2}
     std::vector<Growing_point*> gpp;
-    auto gp1 = new Growing_point(1, 2, new Block(1, 1, (std::vector<std::vector<uint8_t>>){0}));
-    auto gp2 = new Growing_point(3, 1, new Block(1, 1, (std::vector<std::vector<uint8_t>>){0}));
-    auto gp3 = new Growing_point(2, 1, new Block(1, 1, (std::vector<std::vector<uint8_t>>){0}));
-    auto gp4 = new Growing_point(0, 2, new Block(1, 1, (std::vector<std::vector<uint8_t>>){0}));
+    auto gp1 = new Growing_point(1, 2);
+    auto gp2 = new Growing_point(3, 1);
+    auto gp3 = new Growing_point(2, 1);
+    auto gp4 = new Growing_point(0, 2);
     gpp.push_back(gp1);
     gpp.push_back(gp2);
     gpp.push_back(gp3);

@@ -29,6 +29,10 @@ namespace encoder{
         double tolerance;
 
         void adaptive_vector_quantization(std::vector<std::vector<uint8_t>>& image);
-        void find_common_block(Dictionary* dict, Growing_point* current_gp, size_t* common_block_idx);
+        void find_common_block(Dictionary* dict,
+                               std::vector<std::vector<uint8_t>>& image,
+                               Growing_point* current_gp,
+                               size_t* common_block_idx,
+                               Block** picked_block);
     } Encoder;
 }

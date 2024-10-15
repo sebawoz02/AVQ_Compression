@@ -12,7 +12,7 @@ namespace heuristic {
 
     using gh_t = Growing_point* (*)(std::vector<Growing_point*>&);
 
-    using duh_t = void (*)(Dictionary*, Growing_point*, std::vector<std::vector<uint8_t>>&);
+    using duh_t = void (*)(Dictionary*, Block*, Growing_point*, std::vector<std::vector<uint8_t>>&);
 
     using dh_t = void (*)(Dictionary*);
 
@@ -32,12 +32,13 @@ namespace heuristic {
         Growing_point* wave(std::vector<Growing_point*>& gp_pool);
         Growing_point* diagonal(std::vector<Growing_point*>& gp_pool);
         Growing_point* lifo(std::vector<Growing_point*>& gp_pool);
+        // circular coverage
     }
 
     namespace dict_update {
-        void one_column(Dictionary* dict, Growing_point* gp, std::vector<std::vector<uint8_t>>& image);
-        void one_row(Dictionary *dict, Growing_point *gp, std::vector<std::vector<uint8_t>> &image);
-        void one_column_one_row(Dictionary *dict, Growing_point *gp, std::vector<std::vector<uint8_t>> &image);
+        void one_column(Dictionary* dict, Block* picked_block, Growing_point* gp, std::vector<std::vector<uint8_t>>& image);
+        void one_row(Dictionary *dict, Block* picked_block, Growing_point *gp, std::vector<std::vector<uint8_t>> &image);
+        void one_column_one_row(Dictionary *dict, Block* picked_block, Growing_point *gp, std::vector<std::vector<uint8_t>> &image);
     }
 
     namespace dict_deletion {

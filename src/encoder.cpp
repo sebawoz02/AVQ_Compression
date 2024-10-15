@@ -32,7 +32,7 @@ namespace encoder {
         output_writer::OutWriter out_writer(*out_file);
 
         // Add pixel [0, 0] to growing points pool
-        auto* init_gp = new Growing_point(0, 0, 1, 1, image);
+        auto* init_gp = new Growing_point(0, 0);
         std::vector<Growing_point*> gp_pool{};
         gp_pool.push_back(init_gp);
 
@@ -49,9 +49,10 @@ namespace encoder {
             gpp_size--; // Current gp removed from growing points pool
 
             size_t common_block_idx;
-            find_common_block(dict, gp, &common_block_idx);
+            Block* picked_block;
+            find_common_block(dict, image, gp, &common_block_idx, &picked_block);
 
-            auto bits_to_transmit = static_cast<size_t>(
+            auto bits_to_transmit = static_cast<int8_t>(
                     std::floor(log2(static_cast<double>(dict->size))));
 
             // Write common_block_idx to file on log2(dict.size) bits
@@ -62,7 +63,8 @@ namespace encoder {
             }
 
             // Update dict
-            dict_update_heur(dict, gp, image);
+            dict_update_heur(dict, picked_block, gp, image);
+            delete picked_block;
             // Check if dictionary is full and if so use deletion heuristic
             deletion_heur(dict);
             // Update growing points pool
@@ -74,22 +76,41 @@ namespace encoder {
         delete dict;
     }
 
-    void Encoder::find_common_block(Dictionary* dict, Growing_point* current_gp, size_t* common_block_idx)
+    void Encoder::find_common_block(Dictionary* dict,
+                                    std::vector<std::vector<uint8_t>>& image,
+                                    Growing_point* current_gp,
+                                    size_t* common_block_idx,
+                                    Block** picked_block)
     {
-        if(current_gp->block->width == 1 && current_gp->block->height == 1)
-        {
-            *common_block_idx = current_gp->block->pixels[0][0];
-            return;
-        }
 
         double best_match = 999.0;
         size_t best_i = 0;
-        for(size_t i = 256; i < dict->size; i++)
+        auto* gp_block = new Block(0, 0,  std::vector<std::vector<uint8_t>>());
+
+        for(size_t i = dict->size - 1; i > 255; i--)
         {
-            const double match = match_heur(current_gp->block, dict->entries[i]);
+            Block* dict_entry = dict->entries[i];
+            if(gp_block->width != dict_entry->width ||  gp_block->height != dict_entry->height)
+            {
+                delete gp_block;
+                std::vector<std::vector<uint8_t>> pixels(
+                        std::vector<std::vector<uint8_t>>(dict_entry->width,
+                                                          std::vector<uint8_t>(dict_entry->height, 0)));
+                for(size_t x = 0; x < dict_entry->width; x++)
+                {
+                    for(size_t y = 0; y < dict_entry->height; y++)
+                    {
+                        pixels[x][y] = image[current_gp->x + x][current_gp->y + y];
+                    }
+                }
+                gp_block = new Block(dict_entry->width, dict_entry->height, pixels);
+            }
+
+            const double match = match_heur(gp_block, dict->entries[i]);
             if(match < tolerance) // Is this the right way to do this??
             {
                 *common_block_idx = i;
+                *picked_block = gp_block;
                 return;
             }
             if(best_match > match)
@@ -99,5 +120,6 @@ namespace encoder {
             }
         }
         *common_block_idx = best_i;
+        *picked_block = gp_block;
     }
 }
