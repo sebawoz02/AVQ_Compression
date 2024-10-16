@@ -1,11 +1,12 @@
 #include <cmath>
 #include <encoder.hpp>
-#include <growing_point.hpp>
+#include <types/growing_point.hpp>
 #include <output_writer.hpp>
 
 namespace encoder {
   void Encoder::encode(const std::vector<std::vector<Pixel>>& image)
   {
+      // TODO: use new Image struct instead of std::vector<std::vector<uint8_t>>
     const size_t width = image.size();
     const size_t height = image.size();
     std::vector<std::vector<uint8_t>> red(std::vector<std::vector<uint8_t>>(
@@ -76,6 +77,7 @@ namespace encoder {
     delete dict;
   }
 
+  // TODO: fix this function, make it choose the largest block and correctly use tolerance
   void Encoder::find_common_block(Dictionary* dict,
                                   std::vector<std::vector<uint8_t>>& image,
                                   Growing_point* current_gp,
@@ -90,6 +92,8 @@ namespace encoder {
       Block* dict_entry = dict->entries[i];
       if(gp_block->width != dict_entry->width ||
          gp_block->height != dict_entry->height) {
+          // TODO: This part might not be that easy check in the future.
+          //       Need to check if gp_block is not on top of the already sent part of image.
         delete gp_block;
         std::vector<std::vector<uint8_t>> pixels(
           std::vector<std::vector<uint8_t>>(

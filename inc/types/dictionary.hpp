@@ -1,6 +1,6 @@
 #pragma once
 
-#include <block.hpp>
+#include <types/block.hpp>
 
 typedef struct Dictionary {
   size_t size;

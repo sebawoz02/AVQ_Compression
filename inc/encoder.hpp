@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <fstream>
 #include <heuristics.hpp>
-#include <pixel.hpp>
+#include <types/pixel.hpp>
 
 namespace encoder {
   typedef struct Encoder {

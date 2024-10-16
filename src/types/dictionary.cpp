@@ -1,4 +1,4 @@
-#include <dictionary.hpp>
+#include <types/dictionary.hpp>
 #include <stdexcept>
 
 Dictionary::Dictionary()

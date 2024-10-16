@@ -34,12 +34,7 @@ namespace heuristic {
     (void)growing_points;
     (void)size;
     (void)cur_gp;
-    // TODO: how to add gp, how to choose its size
-    // concept:
-    // niech struct GP sklada sie jedynie z x, y.
-    // nastepnie wybierane są rozne mozliwe dopasowania podobne kształtem do wejść w dictionary
-    // minusy:
-    // - kosztowna operacja
+
   }
 
   // GROWING
@@ -136,7 +131,7 @@ namespace heuristic {
   // DICT DELETION
   void dict_deletion::fifo(Dictionary* dict)
   {
-    // TODO: FIX THIS logic
+    // TODO: FIX THIS logic ( create new dict struct )
     while(dict->size > DICT_SIZE_LIMIT) {
       delete dict->entries[256]; // DON'T TOUCH 1x1 blocks
       dict->entries.erase(dict->entries.begin() + 256);

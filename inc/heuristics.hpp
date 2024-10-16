@@ -1,7 +1,7 @@
 #pragma once
 
-#include <dictionary.hpp>
-#include <growing_point.hpp>
+#include <types/dictionary.hpp>
+#include <types/growing_point.hpp>
 
 namespace heuristic {
   using mh_t = double (*)(Block*, Block*);

@@ -2,7 +2,7 @@
 
 #include <cstdint>
 #include <fstream>
-#include <pixel.hpp>
+#include <types/pixel.hpp>
 #include <string>
 #include <vector>
 

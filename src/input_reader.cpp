@@ -1,6 +1,6 @@
 #include <input_reader.hpp>
 
-#include <header_tga.hpp>
+#include <types/header_tga.hpp>
 #include <iostream>
 
 namespace input_reader {
