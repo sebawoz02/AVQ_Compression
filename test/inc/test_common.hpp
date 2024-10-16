@@ -4,4 +4,4 @@
 
 void test_heuristics();
 
-void test_dict_list();
+void test_dictionary();

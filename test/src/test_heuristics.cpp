@@ -39,11 +39,11 @@ static void test_dict_init()
   Dictionary* dict = heuristic::dict_init::range_0_to_255();
 
   assert(dict != nullptr);
-  assert(dict->size == 256);
+  assert(dict->size() == 256);
 
-  for(size_t i = 0; i < 256; i++) {
-    assert(dict->entries[i] != nullptr);
-    assert(dict->entries[i]->pixels[0][0] == i);
+  for(uint16_t i = 0; i < 256; i++) {
+    assert((*dict)[i] != nullptr);
+    assert((*dict)[i]->pixels[0][0] == i);
   }
 
   delete dict;

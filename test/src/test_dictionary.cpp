@@ -1,11 +1,11 @@
 #include <test_common.hpp>
-#include <types/dict_list.hpp>
+#include <types/dictionary.hpp>
 
 static void test_init();
 static void test_insert();
 static void test_remove();
 
-void test_dict_list()
+void test_dictionary()
 {
   test_init();
   test_insert();
@@ -14,7 +14,7 @@ void test_dict_list()
 
 static void test_init()
 {
-  auto* d = new Dict_list();
+  auto* d = new Dictionary();
   assert(d != nullptr);
 
   assert(d->size() == 0);
@@ -24,7 +24,7 @@ static void test_init()
 
 static void test_insert()
 {
-  auto* dict_list = new Dict_list();
+  auto* dict_list = new Dictionary();
   assert(dict_list != nullptr);
 
   std::vector<std::vector<uint8_t>> dummy_pixel(
@@ -40,19 +40,19 @@ static void test_insert()
 
   dict_list->insert(ent2);
   assert(dict_list->size() == 2);
-  assert((*dict_list)[0] == ent2);
-  assert((*dict_list)[1] == ent1);
+  assert((*dict_list)[0] == ent1);
+  assert((*dict_list)[1] == ent2);
 
   dict_list->insert(ent3);
   assert(dict_list->size() == 3);
-  assert((*dict_list)[0] == ent2);
-  assert((*dict_list)[1] == ent1);
+  assert((*dict_list)[0] == ent1);
+  assert((*dict_list)[1] == ent2);
   assert((*dict_list)[2] == ent3);
 
   dict_list->insert(ent4);
   assert((dict_list->size() == 4));
-  assert((*dict_list)[0] == ent2);
-  assert((*dict_list)[1] == ent1);
+  assert((*dict_list)[0] == ent1);
+  assert((*dict_list)[1] == ent2);
   assert((*dict_list)[3] == ent3);
   assert((*dict_list)[2] == ent4);
 
@@ -61,7 +61,7 @@ static void test_insert()
 
 static void test_remove()
 {
-  auto* dict_list = new Dict_list();
+  auto* dict_list = new Dictionary();
   assert(dict_list != nullptr);
 
   std::vector<std::vector<uint8_t>> dummy_pixel(
@@ -76,15 +76,15 @@ static void test_remove()
   dict_list->insert(ent3);
   dict_list->insert(ent4);
   assert(dict_list->size() == 4);
-  assert((*dict_list)[0] == ent2);
-  assert((*dict_list)[1] == ent1);
+  assert((*dict_list)[0] == ent1);
+  assert((*dict_list)[1] == ent2);
   assert((*dict_list)[3] == ent3);
   assert((*dict_list)[2] == ent4);
 
   dict_list->remove(ent4);
   assert(dict_list->size() == 3);
-  assert((*dict_list)[0] == ent2);
-  assert((*dict_list)[1] == ent1);
+  assert((*dict_list)[0] == ent1);
+  assert((*dict_list)[1] == ent2);
   assert((*dict_list)[2] == ent3);
 
   dict_list->remove(ent2);

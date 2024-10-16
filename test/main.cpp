@@ -5,7 +5,7 @@ int main(int argc, char** argv) {
     (void) argv;
 
     test_heuristics();
-    test_dict_list();
+    test_dictionary();
 
     return 0;
 }

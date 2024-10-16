@@ -16,10 +16,10 @@ namespace heuristic {
   Dictionary* dict_init::range_0_to_255()
   {
     auto* dict = new Dictionary();
-    for(size_t color = 0; color < 256; color++) {
+    for(uint16_t color = 0; color < 256; color++) {
       std::vector<std::vector<uint8_t>> pixel(
         std::vector<std::vector<uint8_t>>(1, std::vector<uint8_t>(1, 0)));
-      pixel[0][0] = color;
+      pixel[0][0] = static_cast<uint8_t>(color);
       auto* block = new Block(1, 1, pixel);
       dict->insert(block);
     }
@@ -34,7 +34,6 @@ namespace heuristic {
     (void)growing_points;
     (void)size;
     (void)cur_gp;
-
   }
 
   // GROWING
@@ -131,11 +130,8 @@ namespace heuristic {
   // DICT DELETION
   void dict_deletion::fifo(Dictionary* dict)
   {
-    // TODO: FIX THIS logic ( create new dict struct )
-    while(dict->size > DICT_SIZE_LIMIT) {
-      delete dict->entries[256]; // DON'T TOUCH 1x1 blocks
-      dict->entries.erase(dict->entries.begin() + 256);
-      dict->size--;
+    while(dict->size() > DICT_SIZE_LIMIT) {
+      dict->remove((*dict)[256]); // DON'T TOUCH 1x1 blocks
     }
   }
 } // namespace heuristic
