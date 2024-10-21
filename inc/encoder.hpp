@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cstdint>
 #include <fstream>
 #include <heuristics.hpp>
 #include <types/pixel.hpp>
@@ -27,10 +26,6 @@ namespace encoder {
 
     double tolerance;
 
-    void adaptive_vector_quantization(std::vector<std::vector<uint8_t>>& image);
-    void find_common_block(Dictionary* dict,
-                           std::vector<std::vector<uint8_t>>& image,
-                           Growing_point* current_gp, size_t* common_block_idx,
-                           Block** picked_block);
+    void adaptive_vector_quantization(Image image);
   } Encoder;
 } // namespace encoder

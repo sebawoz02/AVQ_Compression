@@ -6,7 +6,6 @@
 namespace encoder {
   void Encoder::encode(const std::vector<std::vector<Pixel>>& image)
   {
-    // TODO: use new Image struct instead of std::vector<std::vector<uint8_t>>
     const size_t width = image.size();
     const size_t height = image.size();
     std::vector<std::vector<uint8_t>> red(std::vector<std::vector<uint8_t>>(
@@ -24,13 +23,12 @@ namespace encoder {
       }
     }
 
-    adaptive_vector_quantization(red);
-    adaptive_vector_quantization(green);
-    adaptive_vector_quantization(blue);
+    adaptive_vector_quantization(Image(red, width, height));
+    adaptive_vector_quantization(Image(green, width, height));
+    adaptive_vector_quantization(Image(blue, width, height));
   }
 
-  void Encoder::adaptive_vector_quantization(
-    std::vector<std::vector<uint8_t>>& image)
+  void Encoder::adaptive_vector_quantization(Image image)
   {
     output_writer::OutWriter out_writer(*out_file);
 
@@ -52,7 +50,7 @@ namespace encoder {
 
       size_t common_block_idx;
       Block* picked_block;
-      find_common_block(dict, image, gp, &common_block_idx, &picked_block);
+      match_heur(dict, tolerance, image, gp, &common_block_idx, &picked_block);
 
       auto bits_to_transmit = static_cast<int8_t>(
         std::floor(log2(static_cast<double>(dict->size()))));
@@ -77,48 +75,4 @@ namespace encoder {
     delete dict;
   }
 
-  // TODO: fix this function, make it choose the largest block and correctly use tolerance
-  void Encoder::find_common_block(Dictionary* dict,
-                                  std::vector<std::vector<uint8_t>>& image,
-                                  Growing_point* current_gp,
-                                  size_t* common_block_idx,
-                                  Block** picked_block)
-  {
-    double best_match = 999.0;
-    size_t best_i = 0;
-    auto* gp_block = new Block(0, 0, std::vector<std::vector<uint8_t>>());
-
-    for(size_t i = dict->size() - 1; i > 255; i--) {
-      Block* dict_entry = (*dict)[i];
-      if(gp_block->width != dict_entry->width ||
-         gp_block->height != dict_entry->height) {
-        // TODO: This part might not be that easy check in the future.
-        //       Need to check if gp_block is not on top of the already sent part of image.
-        delete gp_block;
-        std::vector<std::vector<uint8_t>> pixels(
-          std::vector<std::vector<uint8_t>>(
-            dict_entry->width, std::vector<uint8_t>(dict_entry->height, 0)));
-        for(size_t x = 0; x < dict_entry->width; x++) {
-          for(size_t y = 0; y < dict_entry->height; y++) {
-            pixels[x][y] = image[current_gp->x + x][current_gp->y + y];
-          }
-        }
-        gp_block = new Block(dict_entry->width, dict_entry->height, pixels);
-      }
-
-      const double match = match_heur(gp_block, (*dict)[i]);
-      if(match < tolerance) // Is this the right way to do this??
-      {
-        *common_block_idx = i;
-        *picked_block = gp_block;
-        return;
-      }
-      if(best_match > match) {
-        best_match = match;
-        best_i = i;
-      }
-    }
-    *common_block_idx = best_i;
-    *picked_block = gp_block;
-  }
 } // namespace encoder
