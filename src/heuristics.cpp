@@ -2,6 +2,7 @@
 #include <heuristics.hpp>
 
 #define DICT_SIZE_LIMIT 512
+#define MSE_MAX (255*255)
 
 namespace heuristic {
 
@@ -9,27 +10,30 @@ namespace heuristic {
 
   static double mse(Block* b1, Block* b2)
   {
-    (void)b1;
-    (void)b2;
-    return 0.0;
+      double square_error = 0.0;
+      size_t size = b1->width * b1->height;
+
+      for (size_t i = 0; i < b1->height; ++i) {
+          for (size_t j = 0; j < b1->width; ++j) {
+              int16_t diff = static_cast<int16_t>(b1->pixels[j][i]) - static_cast<int16_t>(b2->pixels[j][i]);
+              square_error += diff * diff;
+          }
+      }
+
+      return square_error / static_cast<double>(size);
   }
 
   // MATCH
-  // TODO: fix this function, make it choose the largest block and correctly use tolerance
   void match::top_left_mse(Dictionary* dict, double tolerance, Image& image,
                            Growing_point* current_gp, size_t* common_block_idx,
                            Block** picked_block)
   {
-    double best_match = 999.0;
-    size_t best_i = 0;
     auto* gp_block = new Block(0, 0, std::vector<std::vector<uint8_t>>());
 
     for(size_t i = dict->size() - 1; i > 255; i--) {
       Block* dict_entry = (*dict)[i];
       if(gp_block->width != dict_entry->width ||
          gp_block->height != dict_entry->height) {
-        // TODO: This part might not be that easy check in the future.
-        //       Need to check if gp_block is not on top of the already sent part of image.
         delete gp_block;
         std::vector<std::vector<uint8_t>> pixels(
           std::vector<std::vector<uint8_t>>(
@@ -43,18 +47,22 @@ namespace heuristic {
       }
 
       const double match = mse(gp_block, (*dict)[i]);
-      if(match < tolerance) // Is this the right way to do this??
+      if( (1.0 - match/MSE_MAX) > tolerance)
       {
+        // The largest block that fits in tolerance
         *common_block_idx = i;
         *picked_block = gp_block;
         return;
       }
-      if(best_match > match) {
-        best_match = match;
-        best_i = i;
-      }
+
     }
-    *common_block_idx = best_i;
+    delete gp_block;
+    std::vector<std::vector<uint8_t>> pixel(std::vector<std::vector<uint8_t>>(
+              1, std::vector<uint8_t>(1, image.pixels[current_gp->x][current_gp->y])));
+
+    gp_block = new Block(1, 1, pixel);
+
+    *common_block_idx = image.pixels[current_gp->x][current_gp->y];
     *picked_block = gp_block;
   }
 
