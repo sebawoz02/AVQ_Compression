@@ -1,6 +1,6 @@
+#include <iostream>
 #include <test_common.hpp>
 #include <types/dictionary.hpp>
-#include <iostream>
 
 static void test_init();
 static void test_insert();

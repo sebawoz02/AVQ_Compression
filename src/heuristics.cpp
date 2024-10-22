@@ -2,25 +2,40 @@
 #include <heuristics.hpp>
 
 #define DICT_SIZE_LIMIT 512
-#define MSE_MAX (255*255)
+#define MSE_MAX (255 * 255)
 
 namespace heuristic {
 
   static double mse(Block* b1, Block* b2);
+  static void mark_image(Image& image, size_t width, size_t height, size_t x,
+                         size_t y);
 
   static double mse(Block* b1, Block* b2)
   {
-      double square_error = 0.0;
-      size_t size = b1->width * b1->height;
+    double square_error = 0.0;
+    size_t size = b1->width * b1->height;
 
-      for (size_t i = 0; i < b1->height; ++i) {
-          for (size_t j = 0; j < b1->width; ++j) {
-              int16_t diff = static_cast<int16_t>(b1->pixels[j][i]) - static_cast<int16_t>(b2->pixels[j][i]);
-              square_error += diff * diff;
-          }
+    for(size_t i = 0; i < b1->height; ++i) {
+      for(size_t j = 0; j < b1->width; ++j) {
+        int16_t diff = static_cast<int16_t>(b1->pixels[j][i]) -
+                       static_cast<int16_t>(b2->pixels[j][i]);
+        square_error += diff * diff;
       }
+    }
 
-      return square_error / static_cast<double>(size);
+    return square_error / static_cast<double>(size);
+  }
+
+  static void mark_image(Image& image, size_t width, size_t height, size_t x,
+                         size_t y)
+  {
+    const size_t limit_x = width + x;
+    const size_t limit_y = height + y;
+    for(size_t i = x; i < limit_x; i++) {
+      for(size_t j = y; j < limit_y; j++) {
+        image.encoded[i][j] = true;
+      }
+    }
   }
 
   // MATCH
@@ -32,6 +47,11 @@ namespace heuristic {
 
     for(size_t i = dict->size() - 1; i > 255; i--) {
       Block* dict_entry = (*dict)[i];
+      if(dict_entry->height + current_gp->y > image.height ||
+         dict_entry->width + current_gp->x > image.width) {
+        continue;
+      }
+
       if(gp_block->width != dict_entry->width ||
          gp_block->height != dict_entry->height) {
         delete gp_block;
@@ -47,23 +67,25 @@ namespace heuristic {
       }
 
       const double match = mse(gp_block, (*dict)[i]);
-      if( (1.0 - match/MSE_MAX) > tolerance)
-      {
+      if((1.0 - match / MSE_MAX) > tolerance) {
         // The largest block that fits in tolerance
         *common_block_idx = i;
         *picked_block = gp_block;
+        mark_image(image, gp_block->width, gp_block->height, current_gp->x,
+                   current_gp->y);
         return;
       }
-
     }
     delete gp_block;
     std::vector<std::vector<uint8_t>> pixel(std::vector<std::vector<uint8_t>>(
-              1, std::vector<uint8_t>(1, image.pixels[current_gp->x][current_gp->y])));
+      1, std::vector<uint8_t>(1, image.pixels[current_gp->x][current_gp->y])));
 
     gp_block = new Block(1, 1, pixel);
 
     *common_block_idx = image.pixels[current_gp->x][current_gp->y];
     *picked_block = gp_block;
+    mark_image(image, gp_block->width, gp_block->height, current_gp->x,
+               current_gp->y);
   }
 
   // DICT INIT
@@ -85,6 +107,7 @@ namespace heuristic {
   void gp_update::first_from_left(std::vector<Growing_point*>& growing_points,
                                   const size_t* size, Growing_point* cur_gp)
   {
+    //    TODO: finish
     (void)growing_points;
     (void)size;
     (void)cur_gp;
