@@ -1,0 +1,25 @@
+name: clang
+
+on: [push]
+
+jobs:
+  build:
+    name: Build and Compile with clang
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Prepare env
+        run: |
+          sudo ./ci/config_clang.sh
+        continue-on-error: true
+
+      - name: Configure and build
+        run: |
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_C_COMPILER="clang" -DCMAKE_CXX_COMPILER="clang++"
+          make
+        continue-on-error: false

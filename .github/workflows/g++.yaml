@@ -1,0 +1,25 @@
+name: g++
+
+on: [push]
+
+jobs:
+  build:
+    name: Build and Compile
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Prepare env
+        run: |
+          sudo ./ci/config_gcc.sh
+        continue-on-error: true
+
+      - name: Configure and build
+        run: |
+          mkdir build
+          cd build
+          cmake ..
+          make
+        continue-on-error: false

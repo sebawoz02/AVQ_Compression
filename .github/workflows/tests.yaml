@@ -1,0 +1,33 @@
+name: build and tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Prepare env
+        run: |
+          sudo ./ci/config_gcc.sh
+        continue-on-error: true
+
+      - name: Build project
+        run: |
+          mkdir build
+          cd build
+          cmake ..
+          make
+
+      # Step 4: Run the tests
+      - name: Run tests
+        run: ./build/test
