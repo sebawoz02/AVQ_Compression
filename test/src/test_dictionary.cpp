@@ -1,5 +1,6 @@
 #include <test_common.hpp>
 #include <types/dictionary.hpp>
+#include <iostream>
 
 static void test_init();
 static void test_insert();
@@ -10,6 +11,8 @@ void test_dictionary()
   test_init();
   test_insert();
   test_remove();
+
+  std::cout << "Dictionary struct tests finished successfully!" << std::endl;
 }
 
 static void test_init()

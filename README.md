@@ -1,0 +1,3 @@
+[![tests](https://github.com/sebawoz02/AVQ_Compression/actions/workflows/tests.yaml/badge.svg?branch=main)](https://github.com/sebawoz02/AVQ_Compression/actions/workflows/tests.yaml)
+[![g++](https://github.com/sebawoz02/AVQ_Compression/actions/workflows/g++.yaml/badge.svg?branch=main)](https://github.com/sebawoz02/AVQ_Compression/actions/workflows/g++.yaml)
+[![clang](https://github.com/sebawoz02/AVQ_Compression/actions/workflows/clang.yaml/badge.svg?branch=main)](https://github.com/sebawoz02/AVQ_Compression/actions/workflows/clang.yaml)

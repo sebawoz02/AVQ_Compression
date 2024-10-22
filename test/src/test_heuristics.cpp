@@ -1,5 +1,6 @@
 #include <heuristics.hpp>
 #include <test_common.hpp>
+#include <iostream>
 
 static void test_match();
 static void test_dict_init();
@@ -16,6 +17,8 @@ void test_heuristics()
   test_dict_update();
   test_dict_deletion();
   test_gp_update();
+
+ std::cout << "Heuristics tests finished successfully!" << std::endl;
 }
 
 static void test_match()
