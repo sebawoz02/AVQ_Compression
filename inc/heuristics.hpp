@@ -3,6 +3,7 @@
 #include <types/dictionary.hpp>
 #include <types/growing_point.hpp>
 #include <types/image.hpp>
+#include <types/gp_pool.hpp>
 
 namespace heuristic {
   using mh_t = void (*)(Dictionary*, double, Image&, Growing_point*, size_t*,
@@ -10,10 +11,10 @@ namespace heuristic {
 
   using idh_t = Dictionary* (*)();
 
-  using gpuh_t = void (*)(std::vector<Growing_point*>&, size_t*,
+  using gpuh_t = void (*)(GP_pool*, size_t*,
                           Growing_point*);
 
-  using gh_t = Growing_point* (*)(std::vector<Growing_point*>&);
+  using gh_t = Growing_point* (*)(GP_pool*);
 
   using duh_t = void (*)(Dictionary*, Block*, Growing_point*, Image&);
 
@@ -30,14 +31,14 @@ namespace heuristic {
   }
 
   namespace gp_update {
-    void first_from_left(std::vector<Growing_point*>& growing_points,
+    void first_from_left(GP_pool* growing_points,
                          const size_t* size, Growing_point* cur_gp);
   }
 
   namespace growing {
-    Growing_point* wave(std::vector<Growing_point*>& gp_pool);
-    Growing_point* diagonal(std::vector<Growing_point*>& gp_pool);
-    Growing_point* lifo(std::vector<Growing_point*>& gp_pool);
+    Growing_point* wave(GP_pool* gp_pool);
+    Growing_point* diagonal(GP_pool* gp_pool);
+    Growing_point* lifo(GP_pool* gp_pool);
     // circular coverage
   } // namespace growing
 

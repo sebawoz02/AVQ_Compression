@@ -104,7 +104,7 @@ namespace heuristic {
   }
 
   // GP UPDATE
-  void gp_update::first_from_left(std::vector<Growing_point*>& growing_points,
+  void gp_update::first_from_left(GP_pool* growing_points,
                                   const size_t* size, Growing_point* cur_gp)
   {
     //    TODO: finish
@@ -114,11 +114,11 @@ namespace heuristic {
   }
 
   // GROWING
-  Growing_point* growing::wave(std::vector<Growing_point*>& gp_pool)
+  Growing_point* growing::wave(GP_pool* gp_pool)
   {
-    Growing_point* best = gp_pool[0];
-    for(size_t i = 1; i < gp_pool.size(); i++) {
-      Growing_point* cur = gp_pool[i];
+    Growing_point* best = (*gp_pool)[0];
+    for(size_t i = 1; (*gp_pool)[i] != nullptr; i++) {
+      Growing_point* cur = (*gp_pool)[i];
       if(best->x + best->y > cur->x + cur->y) {
         best = cur;
       }
@@ -127,11 +127,11 @@ namespace heuristic {
     return best;
   }
 
-  Growing_point* growing::diagonal(std::vector<Growing_point*>& gp_pool)
+  Growing_point* growing::diagonal(GP_pool* gp_pool)
   {
-    Growing_point* best = gp_pool[0];
-    for(size_t i = 1; i < gp_pool.size(); i++) {
-      Growing_point* cur = gp_pool[i];
+      Growing_point* best = (*gp_pool)[0];
+      for(size_t i = 1; (*gp_pool)[i] != nullptr; i++) {
+          Growing_point* cur = (*gp_pool)[i];
       if(abs((int)best->x - (int)best->y) > abs((int)cur->x - (int)cur->y)) {
         best = cur;
       }
@@ -140,9 +140,9 @@ namespace heuristic {
     return best;
   }
 
-  Growing_point* growing::lifo(std::vector<Growing_point*>& gp_pool)
+  Growing_point* growing::lifo(GP_pool* gp_pool)
   {
-    return gp_pool[gp_pool.size() - 1];
+    return gp_pool->last();
   }
 
   // DICT UPDATE

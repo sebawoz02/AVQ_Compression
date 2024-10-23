@@ -122,6 +122,11 @@ static void test_match()
     assert(best_block->pixels[1][0] == 5);
     assert(best_block->pixels[1][1] == 5);
 
+    assert(image.encoded[1][1] == true);
+    assert(image.encoded[1][2] == true);
+    assert(image.encoded[2][1] == true);
+    assert(image.encoded[2][2] == true);
+
     delete dict;
     delete best_block;
     delete gp;
@@ -222,6 +227,8 @@ static void test_match()
     assert(best_block->width == 1);
     assert(best_block->pixels[0][0] == 255);
 
+    assert(image.encoded[1][1] == true);
+
     delete dict;
     delete best_block;
     delete gp;
@@ -246,15 +253,15 @@ static void test_dict_init()
 static void test_growing()
 {
   // {1, 2}, {3, 1}, {2, 1}, {0, 2}
-  std::vector<Growing_point*> gpp;
+  GP_pool* gpp = new GP_pool();
   auto gp1 = new Growing_point(1, 2);
   auto gp2 = new Growing_point(3, 1);
   auto gp3 = new Growing_point(2, 1);
   auto gp4 = new Growing_point(0, 2);
-  gpp.push_back(gp1);
-  gpp.push_back(gp2);
-  gpp.push_back(gp3);
-  gpp.push_back(gp4);
+  gpp->add(gp1);
+  gpp->add(gp2);
+  gpp->add(gp3);
+  gpp->add(gp4);
 
   // WAVE
   {
@@ -283,10 +290,7 @@ static void test_growing()
     assert(gp == gp4);
   }
 
-  delete gp1;
-  delete gp2;
-  delete gp3;
-  delete gp4;
+  delete gpp;
 }
 
 // TODO: write tests

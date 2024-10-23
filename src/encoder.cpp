@@ -34,8 +34,8 @@ namespace encoder {
 
     // Add pixel [0, 0] to growing points pool
     auto* init_gp = new Growing_point(0, 0);
-    std::vector<Growing_point*> gp_pool{};
-    gp_pool.push_back(init_gp);
+    auto* gp_pool = new GP_pool();
+    gp_pool->add(init_gp);
 
     size_t gpp_size = 1;
 
@@ -46,7 +46,6 @@ namespace encoder {
     while(gpp_size > 0) {
       // Determine next growing point
       Growing_point* gp = growing_heur(gp_pool);
-      gpp_size--; // Current gp removed from growing points pool
 
       size_t common_block_idx;
       Block* picked_block;
@@ -73,6 +72,7 @@ namespace encoder {
     }
 
     delete dict;
+    delete gp_pool;
   }
 
 } // namespace encoder
