@@ -1,9 +1,9 @@
 #pragma once
 
 #include <types/dictionary.hpp>
+#include <types/gp_pool.hpp>
 #include <types/growing_point.hpp>
 #include <types/image.hpp>
-#include <types/gp_pool.hpp>
 
 namespace heuristic {
   using mh_t = void (*)(Dictionary*, double, Image&, Growing_point*, size_t*,
@@ -11,8 +11,7 @@ namespace heuristic {
 
   using idh_t = Dictionary* (*)();
 
-  using gpuh_t = void (*)(GP_pool*, size_t*,
-                          Growing_point*);
+  using gpuh_t = void (*)(Image&, GP_pool*, size_t*, Growing_point*);
 
   using gh_t = Growing_point* (*)(GP_pool*);
 
@@ -31,8 +30,8 @@ namespace heuristic {
   }
 
   namespace gp_update {
-    void first_from_left(GP_pool* growing_points,
-                         const size_t* size, Growing_point* cur_gp);
+    void first_from_left(Image& image, GP_pool* growing_points, size_t* size,
+                         Growing_point* cur_gp);
   }
 
   namespace growing {

@@ -5,7 +5,6 @@
 static void test_match();
 static void test_dict_init();
 static void test_growing();
-static void test_dict_deletion();
 static void test_gp_update();
 static void test_dict_update();
 
@@ -15,7 +14,6 @@ void test_heuristics()
   test_dict_init();
   test_growing();
   test_dict_update();
-  test_dict_deletion();
   test_gp_update();
 
   std::cout << "Heuristics tests finished successfully!" << std::endl;
@@ -293,18 +291,209 @@ static void test_growing()
   delete gpp;
 }
 
-// TODO: write tests
-static void test_dict_deletion()
-{
-  // implementation not finished
-}
-
 static void test_gp_update()
 {
-  // implementation not finished
+  /**
+   * Testcase 1:  cur_gp should be removed from GPP. [0,1] and [2,0] should be
+   *added.
+   *
+   *  - Image :
+   *          / --------- / ---------- / --------- /
+   *          |           |           |           |
+   *          |    true   |    true   |   false   |
+   *          |           |           |           |
+   *          / --------- / ---------- / --------- /
+   *          |           |           |           |
+   *          |   false   |   false   |   false   |
+   *          |           |           |           |
+   *          / --------- / ---------- / --------- /
+   *          |           |           |           |
+   *          |   false   |   false   |   false   |
+   *          |           |           |           |
+   *          / --------- / ---------- / --------- /
+   *  - GPP:
+   *    {[1, 0]}
+   *  - size: 1
+   *  - cur_gp: [1, 0]
+   **/
+  {
+    const size_t image_height = 3;
+    const size_t image_width = 3;
+    std::vector<std::vector<uint8_t>> pixels(std::vector<std::vector<uint8_t>>(
+      image_width, std::vector<uint8_t>(image_height, 0)));
+    Image image(pixels, image_width, image_height);
+    image.encoded[0][0] = true;
+    image.encoded[1][0] = true;
+
+    auto* gpp = new GP_pool();
+    auto* cur_gp = new Growing_point(1, 0);
+    gpp->add(cur_gp);
+    size_t gpp_size = 1;
+
+    assert((*gpp)[0] == cur_gp);
+
+    heuristic::gp_update::first_from_left(image, gpp, &gpp_size, cur_gp);
+
+    assert(gpp_size == 2);
+    assert((*gpp)[0]->x == 2);
+    assert((*gpp)[0]->y == 0);
+    assert((*gpp)[1]->x == 0);
+    assert((*gpp)[1]->y == 1);
+
+    delete gpp;
+  }
+
+  /**
+   * Testcase 2:  cur_gp should be removed from GPP. Only [1, 2] should be
+   *added.
+   *
+   *  - Image :
+   *          / --------- / ---------- / --------- /
+   *          |           |           |           |
+   *          |    true   |    true   |    true   |
+   *          |           |           |           |
+   *          / --------- / ---------- / --------- /
+   *          |           |           |           |
+   *          |   true    |   false   |   false   |
+   *          |           |           |           |
+   *          / --------- / ---------- / --------- /
+   *          |           |           |           |
+   *          |   true    |   false   |   false   |
+   *          |           |           |           |
+   *          / --------- / ---------- / --------- /
+   *  - GPP:
+   *    {[0, 2], [1, 1]}
+   *  - size: 2
+   *  - cur_gp: [0, 2]
+   **/
+  {
+    const size_t image_height = 3;
+    const size_t image_width = 3;
+    std::vector<std::vector<uint8_t>> pixels(std::vector<std::vector<uint8_t>>(
+      image_width, std::vector<uint8_t>(image_height, 0)));
+    Image image(pixels, image_width, image_height);
+    image.encoded[0][0] = true;
+    image.encoded[1][0] = true;
+    image.encoded[2][0] = true;
+    image.encoded[0][1] = true;
+    image.encoded[0][2] = true;
+
+    auto* gpp = new GP_pool();
+    auto* cur_gp = new Growing_point(0, 2);
+    auto* another_gp = new Growing_point(1, 1);
+    gpp->add(cur_gp);
+    gpp->add(another_gp);
+    size_t gpp_size = 2;
+
+    assert((*gpp)[0] == cur_gp);
+    assert((*gpp)[1] == another_gp);
+
+    heuristic::gp_update::first_from_left(image, gpp, &gpp_size, cur_gp);
+
+    assert(gpp_size == 2);
+    assert((*gpp)[0] == another_gp);
+    assert((*gpp)[1]->x == 1);
+    assert((*gpp)[1]->y == 2);
+
+    delete gpp;
+  }
 }
 
 static void test_dict_update()
 {
   // One Row
+  {
+    /**
+     * - Image :
+     *          / --------- / ---------- / --------- /
+     *          |           |           |           |
+     *          |     5     |     5     |     5     |
+     *          |           |           |           |
+     *          / --------- / ---------- / --------- /
+     *          |           |           |           |
+     *          |     6     |     5     |     5     |
+     *          |           |           |           |
+     *          / --------- / ---------- / --------- /
+     *          |           |           |           |
+     *          |     7     |     6     |     5     |
+     *          |           |           |           |
+     *          / --------- / ---------- / --------- /
+     */
+    const size_t image_height = 3;
+    const size_t image_width = 3;
+    std::vector<std::vector<uint8_t>> pixels(std::vector<std::vector<uint8_t>>(
+      image_width, std::vector<uint8_t>(image_height, 0)));
+    pixels[0][0] = 5;
+    pixels[0][1] = 6;
+    pixels[0][2] = 7;
+    pixels[1][0] = 5;
+    pixels[1][1] = 255;
+    pixels[1][2] = 6;
+    pixels[2][0] = 5;
+    pixels[2][1] = 5;
+    pixels[2][2] = 5;
+    Image image(pixels, image_width, image_height);
+
+    Dictionary* dict = heuristic::dict_init::range_0_to_255();
+    assert(dict != nullptr);
+    assert(dict->size() == 256);
+
+    std::vector<std::vector<uint8_t>> p(
+      std::vector<std::vector<uint8_t>>(1, std::vector<uint8_t>(1, 5)));
+    assert(p[0][0] == 5);
+    auto* picked_block = new Block(1, 1, p);
+    auto* gp = new Growing_point(1, 1);
+
+    heuristic::dict_update::one_row(dict, picked_block, gp, image);
+
+    assert(dict->size() == 257);
+    assert((*dict)[256]->width == 1);
+    assert((*dict)[256]->height == 2);
+    assert((*dict)[256]->pixels[0][0] == 5);
+    assert((*dict)[256]->pixels[0][1] == 5);
+
+    delete dict;
+    delete gp;
+    delete picked_block;
+  }
+
+  // One Column
+  {
+    const size_t image_height = 3;
+    const size_t image_width = 3;
+    std::vector<std::vector<uint8_t>> pixels(std::vector<std::vector<uint8_t>>(
+      image_width, std::vector<uint8_t>(image_height, 0)));
+    pixels[0][0] = 5;
+    pixels[0][1] = 6;
+    pixels[0][2] = 7;
+    pixels[1][0] = 5;
+    pixels[1][1] = 255;
+    pixels[1][2] = 6;
+    pixels[2][0] = 5;
+    pixels[2][1] = 5;
+    pixels[2][2] = 5;
+    Image image(pixels, image_width, image_height);
+
+    Dictionary* dict = heuristic::dict_init::range_0_to_255();
+    assert(dict != nullptr);
+    assert(dict->size() == 256);
+
+    std::vector<std::vector<uint8_t>> p(
+      std::vector<std::vector<uint8_t>>(1, std::vector<uint8_t>(1, 5)));
+    assert(p[0][0] == 5);
+    auto* picked_block = new Block(1, 1, p);
+    auto* gp = new Growing_point(1, 1);
+
+    heuristic::dict_update::one_column(dict, picked_block, gp, image);
+
+    assert(dict->size() == 257);
+    assert((*dict)[256]->width == 2);
+    assert((*dict)[256]->height == 1);
+    assert((*dict)[256]->pixels[0][0] == 6);
+    assert((*dict)[256]->pixels[1][0] == 5);
+
+    delete dict;
+    delete gp;
+    delete picked_block;
+  }
 }

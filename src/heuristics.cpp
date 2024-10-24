@@ -104,13 +104,29 @@ namespace heuristic {
   }
 
   // GP UPDATE
-  void gp_update::first_from_left(GP_pool* growing_points,
-                                  const size_t* size, Growing_point* cur_gp)
+  void gp_update::first_from_left(Image& image, GP_pool* growing_points,
+                                  size_t* size, Growing_point* cur_gp)
   {
-    //    TODO: finish
-    (void)growing_points;
-    (void)size;
-    (void)cur_gp;
+    growing_points->remove(cur_gp);
+    (*size)--;
+
+    size_t y = 0;
+    while(y < image.height) {
+      if(!image.encoded[0][y] && !growing_points->contains(0, y)) {
+        growing_points->add(new Growing_point(0, y));
+        (*size)++;
+        return;
+      }
+      size_t x = 1;
+      while(x < image.width && image.encoded[x][y]) {
+        x++;
+      }
+      if(x != image.width && !growing_points->contains(x, y)) {
+        growing_points->add(new Growing_point(x, y));
+        (*size)++;
+      }
+      y++;
+    }
   }
 
   // GROWING
@@ -129,9 +145,9 @@ namespace heuristic {
 
   Growing_point* growing::diagonal(GP_pool* gp_pool)
   {
-      Growing_point* best = (*gp_pool)[0];
-      for(size_t i = 1; (*gp_pool)[i] != nullptr; i++) {
-          Growing_point* cur = (*gp_pool)[i];
+    Growing_point* best = (*gp_pool)[0];
+    for(size_t i = 1; (*gp_pool)[i] != nullptr; i++) {
+      Growing_point* cur = (*gp_pool)[i];
       if(abs((int)best->x - (int)best->y) > abs((int)cur->x - (int)cur->y)) {
         best = cur;
       }
@@ -146,8 +162,8 @@ namespace heuristic {
   }
 
   // DICT UPDATE
-  void dict_update::one_column(Dictionary* dict, Block* picked_block,
-                               Growing_point* gp, Image& image)
+  void dict_update::one_row(Dictionary* dict, Block* picked_block,
+                            Growing_point* gp, Image& image)
   {
     if(gp->y == 0) {
       auto* b = new Block(picked_block->width, picked_block->height,
@@ -170,8 +186,8 @@ namespace heuristic {
     dict->insert(b);
   }
 
-  void dict_update::one_row(Dictionary* dict, Block* picked_block,
-                            Growing_point* gp, Image& image)
+  void dict_update::one_column(Dictionary* dict, Block* picked_block,
+                               Growing_point* gp, Image& image)
   {
     if(gp->x == 0) {
       auto* b = new Block(picked_block->width, picked_block->height,
@@ -184,9 +200,9 @@ namespace heuristic {
 
     std::vector<std::vector<uint8_t>> pixels(
       std::vector<std::vector<uint8_t>>(w, std::vector<uint8_t>(h, 0)));
-    for(size_t y = 0; y < w; y++) {
+    for(size_t y = 0; y < h; y++) {
       pixels[0][y] = image.pixels[gp->x - 1][gp->y + y];
-      for(size_t x = 1; x < h; x++) {
+      for(size_t x = 1; x < w; x++) {
         pixels[x][y] = picked_block->pixels[x - 1][y];
       }
     }
