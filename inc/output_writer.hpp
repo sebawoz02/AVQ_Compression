@@ -6,7 +6,7 @@
 namespace output_writer {
   typedef struct OutWriter {
     explicit OutWriter(std::ofstream& out)
-      : out_stream(out), bit_idx(7), bit_buffer(0){};
+      : out_stream(out), bit_count(0), bit_buffer(0){};
 
     void write(bool bit);
     void flush_buffer();
@@ -15,7 +15,7 @@ namespace output_writer {
 
   private:
     std::ofstream& out_stream;
-    size_t bit_idx;
+    size_t bit_count;
     uint8_t bit_buffer;
   } OutWriter;
 } // namespace output_writer

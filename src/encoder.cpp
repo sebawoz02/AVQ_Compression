@@ -52,7 +52,7 @@ namespace encoder {
       match_heur(dict, tolerance, image, gp, &common_block_idx, &picked_block);
 
       auto bits_to_transmit = static_cast<int8_t>(
-        std::floor(log2(static_cast<double>(dict->size()))));
+        std::ceil(log2(static_cast<double>(dict->size()))));
 
       // Write common_block_idx to file on log2(dict.size) bits
       for(int8_t i = bits_to_transmit - 1; i >= 0; i--) {

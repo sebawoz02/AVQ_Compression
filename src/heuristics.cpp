@@ -19,11 +19,11 @@ namespace heuristic {
       for(size_t j = 0; j < b1->width; ++j) {
         int16_t diff = static_cast<int16_t>(b1->pixels[j][i]) -
                        static_cast<int16_t>(b2->pixels[j][i]);
-        square_error += diff * diff;
+        square_error += (diff * diff)/static_cast<double>(size);
       }
     }
 
-    return square_error / static_cast<double>(size);
+    return square_error;
   }
 
   static void mark_image(Image& image, size_t width, size_t height, size_t x,
@@ -67,6 +67,7 @@ namespace heuristic {
       }
 
       const double match = mse(gp_block, (*dict)[i]);
+      // TODO: this part might be very wrong
       if((1.0 - match / MSE_MAX) > tolerance) {
         // The largest block that fits in tolerance
         *common_block_idx = i;
@@ -108,7 +109,15 @@ namespace heuristic {
                                   size_t* size, Growing_point* cur_gp)
   {
     growing_points->remove(cur_gp);
+    growing_points->remove_obsolete(image, size);
     (*size)--;
+
+    // TODO: tune this part
+    // LIMIT GPP SIZE TO 100 to speed up this process
+    if(*size > 100)
+    {
+        return;
+    }
 
     size_t y = 0;
     while(y < image.height) {

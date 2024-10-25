@@ -1,6 +1,7 @@
 #pragma once
 
 #include <types/growing_point.hpp>
+#include <types/image.hpp>
 #include <cstddef>
 
 typedef struct GP_pool_entry
@@ -21,6 +22,7 @@ typedef struct GP_pool
 
     void add(Growing_point* gp_new);
     void remove(Growing_point* gp_old);
+    void remove_obsolete(Image& image, size_t* gp_size);
 
     Growing_point* last();
 

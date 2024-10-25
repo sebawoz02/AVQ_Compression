@@ -3,23 +3,24 @@
 namespace output_writer {
   void OutWriter::write(bool bit)
   {
-    if(bit)
-      bit_buffer |= (1 << bit_idx);
-    else
-      bit_buffer &= ~(1 << bit_idx);
-    if(bit_idx == 0) {
-      out_stream.write(reinterpret_cast<const char*>(&bit_buffer),
-                       sizeof(bit_buffer));
-      bit_idx = 7;
-      bit_buffer = 0;
-    } else
-      bit_idx--;
+      bit_buffer = (bit_buffer << 1) | bit;
+      ++bit_count;
+
+      if (bit_count == 8)
+      {
+          flush_buffer();
+      }
   }
 
   void OutWriter::flush_buffer()
   {
-    while(bit_idx != 7)
-      write(false); // add 0 to buffer
+      if (bit_count > 0) {
+          // Pad remaining bits if needed
+          bit_buffer <<= (8 - bit_count);
+          out_stream.put(static_cast<char>(bit_buffer));
+          bit_buffer = 0;
+          bit_count = 0;
+      }
   }
 
   OutWriter::~OutWriter()

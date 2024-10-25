@@ -94,3 +94,32 @@ Growing_point* GP_pool::last() {
 GP_pool_entry::~GP_pool_entry() {
     delete gp;
 }
+
+void GP_pool::remove_obsolete(Image &image, size_t *gp_size) {
+    GP_pool_entry* cur = head;
+    GP_pool_entry* prev = nullptr;
+    while (cur != nullptr)
+    {
+        if(image.encoded[cur->gp->x][cur->gp->y])
+        {
+            GP_pool_entry* to_rm;
+            if(prev == nullptr)
+            {
+                head = cur->next;
+                to_rm = cur;
+                cur = head;
+            }else{
+                to_rm = cur;
+                prev->next = cur->next;
+                cur = cur->next;
+            }
+            delete to_rm;
+            (*gp_size)--;
+        } else
+        {
+            prev = cur;
+            cur = cur->next;
+        }
+    }
+
+}

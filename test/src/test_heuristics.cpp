@@ -251,7 +251,7 @@ static void test_dict_init()
 static void test_growing()
 {
   // {1, 2}, {3, 1}, {2, 1}, {0, 2}
-  GP_pool* gpp = new GP_pool();
+  auto* gpp = new GP_pool();
   auto gp1 = new Growing_point(1, 2);
   auto gp2 = new Growing_point(3, 1);
   auto gp3 = new Growing_point(2, 1);
@@ -294,7 +294,7 @@ static void test_growing()
 static void test_gp_update()
 {
   /**
-   * Testcase 1:  cur_gp should be removed from GPP. [0,1] and [2,0] should be
+   * Testcase 1:  cur_gp and [0, 0] should be removed from GPP. [0,1] and [2,0] should be
    *added.
    *
    *  - Image :
@@ -312,8 +312,8 @@ static void test_gp_update()
    *          |           |           |           |
    *          / --------- / ---------- / --------- /
    *  - GPP:
-   *    {[1, 0]}
-   *  - size: 1
+   *    {[1, 0], [0, 0]}
+   *  - size: 2
    *  - cur_gp: [1, 0]
    **/
   {
@@ -327,10 +327,13 @@ static void test_gp_update()
 
     auto* gpp = new GP_pool();
     auto* cur_gp = new Growing_point(1, 0);
+    auto* obsolete_gp = new Growing_point(0, 0);
     gpp->add(cur_gp);
-    size_t gpp_size = 1;
+    gpp->add(obsolete_gp);
+    size_t gpp_size = 2;
 
     assert((*gpp)[0] == cur_gp);
+    assert((*gpp)[1] == obsolete_gp);
 
     heuristic::gp_update::first_from_left(image, gpp, &gpp_size, cur_gp);
 
