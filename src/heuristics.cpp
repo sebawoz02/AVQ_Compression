@@ -48,7 +48,8 @@ namespace heuristic {
     for(size_t i = dict->size() - 1; i > 255; i--) {
       Block* dict_entry = (*dict)[i];
       if(dict_entry->height + current_gp->y > image.height ||
-         dict_entry->width + current_gp->x > image.width) {
+         dict_entry->width + current_gp->x > image.width ||
+         image.encoded_at(current_gp->x, current_gp->y, dict_entry->width, dict_entry->height)) {
         continue;
       }
 
@@ -175,6 +176,11 @@ namespace heuristic {
                             Growing_point* gp, Image& image)
   {
     if(gp->y == 0) {
+      if(picked_block->width == 1 && picked_block->height == 1)
+      {
+          return;
+      }
+
       auto* b = new Block(picked_block->width, picked_block->height,
                           picked_block->pixels);
       dict->insert(b);
@@ -199,6 +205,10 @@ namespace heuristic {
                                Growing_point* gp, Image& image)
   {
     if(gp->x == 0) {
+        if(picked_block->width == 1 && picked_block->height == 1)
+        {
+            return;
+        }
       auto* b = new Block(picked_block->width, picked_block->height,
                           picked_block->pixels);
       dict->insert(b);

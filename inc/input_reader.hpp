@@ -12,6 +12,9 @@ namespace input_reader {
     explicit InReader(char* input_name);
     std::vector<std::vector<Pixel>>& get_image();
 
+    size_t width;
+    size_t height;
+
   private:
     std::string mode;
     std::vector<std::vector<Pixel>> image;

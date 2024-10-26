@@ -13,11 +13,11 @@ namespace input_reader {
   std::vector<std::vector<Pixel>> load_image(std::ifstream* input_stream,
                                              TGA_header tga_head)
   {
-    std::vector<std::vector<Pixel>> image(tga_head.height,
-                                          std::vector<Pixel>(tga_head.width));
+    std::vector<std::vector<Pixel>> image(std::vector<std::vector<Pixel>>(tga_head.width,
+                                          std::vector<Pixel>(tga_head.height, Pixel(0,0,0))));
 
-    for(int i = 0; i < tga_head.height; i++) {
-      for(int j = 0; j < tga_head.width; j++) {
+    for(int i = 0; i < tga_head.width; i++) {
+      for(int j = 0; j < tga_head.height; j++) {
         *input_stream >> std::noskipws >> image[i][j].blue;
         *input_stream >> std::noskipws >> image[i][j].green;
         *input_stream >> std::noskipws >> image[i][j].red;
@@ -53,6 +53,8 @@ namespace input_reader {
 
       // Load Pixels to 2D vector
       image = load_image(&input_stream, header);
+      width = header.width;
+      height = header.height;
 
       input_stream.close();
     } else if(ends_with(filename, ".png")) {

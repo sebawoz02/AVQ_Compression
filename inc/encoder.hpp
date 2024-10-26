@@ -13,7 +13,7 @@ namespace encoder {
         growing_point_update_heur(gpuh), growing_heur(gh),
         dict_update_heur(duh), deletion_heur(dh), tolerance(t){};
 
-    void encode(const std::vector<std::vector<Pixel>>& image);
+    void encode(const std::vector<std::vector<Pixel>>& image, size_t width, size_t height);
 
   private:
     std::ofstream* out_file;
