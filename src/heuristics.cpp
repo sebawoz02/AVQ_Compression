@@ -19,7 +19,7 @@ namespace heuristic {
       for(size_t j = 0; j < b1->width; ++j) {
         int16_t diff = static_cast<int16_t>(b1->pixels[j][i]) -
                        static_cast<int16_t>(b2->pixels[j][i]);
-        square_error += (diff * diff)/static_cast<double>(size);
+        square_error += (diff * diff) / static_cast<double>(size);
       }
     }
 
@@ -49,7 +49,8 @@ namespace heuristic {
       Block* dict_entry = (*dict)[i];
       if(dict_entry->height + current_gp->y > image.height ||
          dict_entry->width + current_gp->x > image.width ||
-         image.encoded_at(current_gp->x, current_gp->y, dict_entry->width, dict_entry->height)) {
+         image.encoded_at(current_gp->x, current_gp->y, dict_entry->width,
+                          dict_entry->height)) {
         continue;
       }
 
@@ -107,24 +108,21 @@ namespace heuristic {
 
   // GP UPDATE
   void gp_update::first_from_left(Image& image, GP_pool* growing_points,
-                                  size_t* size, Growing_point* cur_gp)
+                                  Growing_point* cur_gp)
   {
     growing_points->remove(cur_gp);
-    growing_points->remove_obsolete(image, size);
-    (*size)--;
+    growing_points->remove_obsolete(image);
 
     // TODO: tune this part
     // LIMIT GPP SIZE TO 100 to speed up this process
-    if(*size > 100)
-    {
-        return;
+    if(growing_points->size() > 100) {
+      return;
     }
 
     size_t y = 0;
     while(y < image.height) {
       if(!image.encoded[0][y] && !growing_points->contains(0, y)) {
         growing_points->add(new Growing_point(0, y));
-        (*size)++;
         return;
       }
       size_t x = 1;
@@ -133,7 +131,6 @@ namespace heuristic {
       }
       if(x != image.width && !growing_points->contains(x, y)) {
         growing_points->add(new Growing_point(x, y));
-        (*size)++;
       }
       y++;
     }
@@ -176,9 +173,8 @@ namespace heuristic {
                             Growing_point* gp, Image& image)
   {
     if(gp->y == 0) {
-      if(picked_block->width == 1 && picked_block->height == 1)
-      {
-          return;
+      if(picked_block->width == 1 && picked_block->height == 1) {
+        return;
       }
 
       auto* b = new Block(picked_block->width, picked_block->height,
@@ -205,10 +201,9 @@ namespace heuristic {
                                Growing_point* gp, Image& image)
   {
     if(gp->x == 0) {
-        if(picked_block->width == 1 && picked_block->height == 1)
-        {
-            return;
-        }
+      if(picked_block->width == 1 && picked_block->height == 1) {
+        return;
+      }
       auto* b = new Block(picked_block->width, picked_block->height,
                           picked_block->pixels);
       dict->insert(b);

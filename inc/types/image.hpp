@@ -1,8 +1,8 @@
 #pragma once
 
+#include <cstddef>
 #include <cstdint>
 #include <utility>
-#include <cstddef>
 #include <vector>
 
 typedef struct Image {

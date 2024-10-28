@@ -330,14 +330,13 @@ static void test_gp_update()
     auto* obsolete_gp = new Growing_point(0, 0);
     gpp->add(cur_gp);
     gpp->add(obsolete_gp);
-    size_t gpp_size = 2;
 
     assert((*gpp)[0] == cur_gp);
     assert((*gpp)[1] == obsolete_gp);
 
-    heuristic::gp_update::first_from_left(image, gpp, &gpp_size, cur_gp);
+    heuristic::gp_update::first_from_left(image, gpp, cur_gp);
 
-    assert(gpp_size == 2);
+    assert(gpp->size() == 2);
     assert((*gpp)[0]->x == 2);
     assert((*gpp)[0]->y == 0);
     assert((*gpp)[1]->x == 0);
@@ -386,14 +385,13 @@ static void test_gp_update()
     auto* another_gp = new Growing_point(1, 1);
     gpp->add(cur_gp);
     gpp->add(another_gp);
-    size_t gpp_size = 2;
 
     assert((*gpp)[0] == cur_gp);
     assert((*gpp)[1] == another_gp);
 
-    heuristic::gp_update::first_from_left(image, gpp, &gpp_size, cur_gp);
+    heuristic::gp_update::first_from_left(image, gpp, cur_gp);
 
-    assert(gpp_size == 2);
+    assert(gpp->size() == 2);
     assert((*gpp)[0] == another_gp);
     assert((*gpp)[1]->x == 1);
     assert((*gpp)[1]->y == 2);

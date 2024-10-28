@@ -11,7 +11,7 @@ namespace heuristic {
 
   using idh_t = Dictionary* (*)();
 
-  using gpuh_t = void (*)(Image&, GP_pool*, size_t*, Growing_point*);
+  using gpuh_t = void (*)(Image&, GP_pool*, Growing_point*);
 
   using gh_t = Growing_point* (*)(GP_pool*);
 
@@ -30,7 +30,7 @@ namespace heuristic {
   }
 
   namespace gp_update {
-    void first_from_left(Image& image, GP_pool* growing_points, size_t* size,
+    void first_from_left(Image& image, GP_pool* growing_points,
                          Growing_point* cur_gp);
   }
 
