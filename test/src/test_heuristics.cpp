@@ -44,14 +44,14 @@ static void test_match()
    *      [[0]],[[1]],...,[[255]], [[5], [5]], [[5, 6]],
    *      [[5, 6], [5, 5]]
    *  - tolerance:
-   *      0.9
+   *      0.1
    *
    */
   {
     // IN
     const size_t image_height = 3;
     const size_t image_width = 3;
-    const double tolerance = 0.9;
+    const double tolerance = 0.1;
     std::vector<std::vector<uint8_t>> pixels(std::vector<std::vector<uint8_t>>(
       image_width, std::vector<uint8_t>(image_height, 0)));
     pixels[0][0] = 5;
@@ -130,7 +130,7 @@ static void test_match()
     delete gp;
   }
   /**
-   * Testcase 2:  There is no match correct match for this tolerance. 1x1 pixel should be picked.
+   * Testcase 2:  There is no correct match for this tolerance. 1x1 pixel should be picked.
    *
    *  - Image :
    *          / --------- / ---------- / --------- /
@@ -152,14 +152,14 @@ static void test_match()
    *      [[0]],[[1]],...,[[255]], [[5], [5]], [[5, 6]],
    *      [[5, 6], [5, 255]]
    *  - tolerance:
-   *      0.9
+   *      0.1
    *
    */
   {
     // IN
     const size_t image_height = 3;
     const size_t image_width = 3;
-    const double tolerance = 0.9;
+    const double tolerance = 0.1;
     std::vector<std::vector<uint8_t>> pixels(std::vector<std::vector<uint8_t>>(
       image_width, std::vector<uint8_t>(image_height, 0)));
     pixels[0][0] = 5;

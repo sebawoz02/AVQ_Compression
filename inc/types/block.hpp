@@ -11,4 +11,6 @@ typedef struct Block {
 
   Block(size_t w, size_t h, std::vector<std::vector<uint8_t>> p)
     : width(w), height(h), pixels(std::move(p)){};
+
+  void mean_and_variance(double* mean, double* variance);
 } Block;

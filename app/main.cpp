@@ -40,7 +40,7 @@ int main(int argc, char** argv)
     io_handler.get_header(&header);
     io_handler.get_image(header.width, header.height, &image);
 
-    Encoder encoder(&io_handler, heuristic::match::top_left_mse,
+    Encoder encoder(&io_handler, heuristic::match::top_left_max_se,
                     heuristic::dict_init::range_0_to_255,
                     heuristic::gp_update::first_from_left,
                     heuristic::growing::wave,

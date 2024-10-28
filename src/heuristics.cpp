@@ -2,11 +2,12 @@
 #include <heuristics.hpp>
 
 #define DICT_SIZE_LIMIT 512
-#define MSE_MAX (255 * 255)
+#define MSE_MAX 65025
 
 namespace heuristic {
 
   static double mse(Block* b1, Block* b2);
+  static double max_se(Block* b1, Block* b2);
   static void mark_image(Image& image, size_t width, size_t height, size_t x,
                          size_t y);
 
@@ -15,15 +16,31 @@ namespace heuristic {
     double square_error = 0.0;
     size_t size = b1->width * b1->height;
 
-    for(size_t i = 0; i < b1->height; ++i) {
-      for(size_t j = 0; j < b1->width; ++j) {
-        int16_t diff = static_cast<int16_t>(b1->pixels[j][i]) -
-                       static_cast<int16_t>(b2->pixels[j][i]);
+    for(size_t i = 0; i < b1->width; ++i) {
+      for(size_t j = 0; j < b1->height; ++j) {
+        auto diff = static_cast<int16_t>(b1->pixels[i][j] - b2->pixels[i][j]);
         square_error += (diff * diff) / static_cast<double>(size);
       }
     }
 
     return square_error;
+  }
+
+  static double max_se(Block* b1, Block* b2)
+  {
+    double max_square_error = 0.0;
+
+    for(size_t i = 0; i < b1->width; ++i) {
+      for(size_t j = 0; j < b1->height; ++j) {
+        auto diff = static_cast<int16_t>(b1->pixels[i][j] - b2->pixels[i][j]);
+        double se = diff * diff;
+        if(se > max_square_error) {
+          max_square_error = se;
+        }
+      }
+    }
+
+    return max_square_error;
   }
 
   static void mark_image(Image& image, size_t width, size_t height, size_t x,
@@ -38,19 +55,19 @@ namespace heuristic {
     }
   }
 
-  // MATCH
-  void match::top_left_mse(Dictionary* dict, double tolerance, Image& image,
-                           Growing_point* current_gp, size_t* common_block_idx,
-                           Block** picked_block)
+  static void top_left(double(match_func)(Block*, Block*),
+                       double max_match_error, Dictionary* dict,
+                       double tolerance, Image& image,
+                       Growing_point* current_gp, size_t* common_block_idx,
+                       Block** picked_block)
   {
     auto* gp_block = new Block(0, 0, std::vector<std::vector<uint8_t>>());
 
     for(size_t i = dict->size() - 1; i > 255; i--) {
       Block* dict_entry = (*dict)[i];
-      if(dict_entry->height + current_gp->y > image.height ||
-         dict_entry->width + current_gp->x > image.width ||
-         image.encoded_at(current_gp->x, current_gp->y, dict_entry->width,
-                          dict_entry->height)) {
+      if(dict_entry->height + current_gp->y >
+           image.height || // || image.encoded_at() for no overlap
+         dict_entry->width + current_gp->x > image.width) {
         continue;
       }
 
@@ -68,9 +85,15 @@ namespace heuristic {
         gp_block = new Block(dict_entry->width, dict_entry->height, pixels);
       }
 
-      const double match = mse(gp_block, (*dict)[i]);
-      // TODO: this part might be very wrong
-      if((1.0 - match / MSE_MAX) > tolerance) {
+      const double match = match_func(gp_block, (*dict)[i]);
+      double mean, variance;
+      gp_block->mean_and_variance(&mean, &variance);
+      double A = variance / mean;
+      double _tolerance = (A <= 0.05)
+                            ? (0.4 * tolerance)
+                            : ((A <= 0.1) ? 0.6 * tolerance : tolerance);
+
+      if(match / max_match_error < _tolerance) {
         // The largest block that fits in tolerance
         *common_block_idx = i;
         *picked_block = gp_block;
@@ -89,6 +112,23 @@ namespace heuristic {
     *picked_block = gp_block;
     mark_image(image, gp_block->width, gp_block->height, current_gp->x,
                current_gp->y);
+  }
+
+  // MATCH
+  void match::top_left_mse(Dictionary* dict, double tolerance, Image& image,
+                           Growing_point* current_gp, size_t* common_block_idx,
+                           Block** picked_block)
+  {
+    top_left(mse, MSE_MAX, dict, tolerance, image, current_gp, common_block_idx,
+             picked_block);
+  }
+
+  void match::top_left_max_se(Dictionary* dict, double tolerance, Image& image,
+                              Growing_point* current_gp,
+                              size_t* common_block_idx, Block** picked_block)
+  {
+    top_left(max_se, MSE_MAX, dict, tolerance, image, current_gp,
+             common_block_idx, picked_block);
   }
 
   // DICT INIT
@@ -113,9 +153,8 @@ namespace heuristic {
     growing_points->remove(cur_gp);
     growing_points->remove_obsolete(image);
 
-    // TODO: tune this part
-    // LIMIT GPP SIZE TO 100 to speed up this process
-    if(growing_points->size() > 100) {
+    // LIMIT GPP SIZE TO 50 to speed up this process
+    if(growing_points->size() > 50) {
       return;
     }
 
