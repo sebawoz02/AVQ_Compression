@@ -20,8 +20,8 @@ std::vector<std::vector<Pixel>> Decoder::decode(size_t width, size_t height)
   Image green = adaptive_vector_quantization(width, height);
   Image blue = adaptive_vector_quantization(width, height);
 
-  std::vector<std::vector<Pixel>> image(std::vector<std::vector<Pixel>>(
-    width, std::vector<Pixel>(height, Pixel(0, 0, 0))));
+  std::vector<std::vector<Pixel>> image(
+    width, std::vector<Pixel>(height, Pixel(0, 0, 0)));
 
   for(size_t i = 0; i < width; i++) {
     for(size_t j = 0; j < height; j++) {
@@ -36,8 +36,8 @@ std::vector<std::vector<Pixel>> Decoder::decode(size_t width, size_t height)
 
 Image Decoder::adaptive_vector_quantization(size_t width, size_t height)
 {
-  std::vector<std::vector<uint8_t>> pixels(
-    std::vector<std::vector<uint8_t>>(width, std::vector<uint8_t>(height, 0)));
+  std::vector<std::vector<uint8_t>> pixels(width,
+                                           std::vector<uint8_t>(height, 0));
   Image image(pixels, width, height);
 
   // Init growing points pool with [0, 0]

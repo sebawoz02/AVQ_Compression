@@ -6,12 +6,11 @@
 void Encoder::encode(const std::vector<std::vector<Pixel>>& image, size_t width,
                      size_t height)
 {
-  std::vector<std::vector<uint8_t>> red(
-    std::vector<std::vector<uint8_t>>(width, std::vector<uint8_t>(height, 0)));
-  std::vector<std::vector<uint8_t>> green(
-    std::vector<std::vector<uint8_t>>(width, std::vector<uint8_t>(height, 0)));
-  std::vector<std::vector<uint8_t>> blue(
-    std::vector<std::vector<uint8_t>>(width, std::vector<uint8_t>(height, 0)));
+  std::vector<std::vector<uint8_t>> red(width, std::vector<uint8_t>(height, 0));
+  std::vector<std::vector<uint8_t>> green(width,
+                                          std::vector<uint8_t>(height, 0));
+  std::vector<std::vector<uint8_t>> blue(width,
+                                         std::vector<uint8_t>(height, 0));
 
   for(size_t i = 0; i < width; i++) {
     for(size_t j = 0; j < height; j++) {

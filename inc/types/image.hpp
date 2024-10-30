@@ -16,5 +16,5 @@ typedef struct Image {
   std::vector<std::vector<uint8_t>> pixels;
   std::vector<std::vector<bool>> encoded;
 
-  bool encoded_at(size_t x, size_t y, size_t w, size_t h);
+  [[maybe_unused]] bool encoded_at(size_t x, size_t y, size_t w, size_t h);
 } Image;

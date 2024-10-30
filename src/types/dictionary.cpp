@@ -102,7 +102,7 @@ Block* Dictionary::operator[](size_t index) const
   return get_entry_at(index)->block;
 }
 
-size_t Dictionary::get_count(size_t index) const
+[[maybe_unused]] size_t Dictionary::get_count(size_t index) const
 {
   return get_entry_at(index)->usage_count;
 }
@@ -128,7 +128,7 @@ Dict_entry* Dictionary::get_entry_at(size_t index) const
   }
 }
 
-void Dictionary::inc_usage_count(Block* block)
+[[maybe_unused]] void Dictionary::inc_usage_count(Block* block)
 {
   Dict_entry* ent = first_entry;
   while(ent != nullptr && ent->block != block) {

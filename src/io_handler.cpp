@@ -65,9 +65,7 @@ void IO_Handler::get_image(size_t width, size_t height,
 
   for(size_t i = 0; i < width; i++) {
     for(size_t j = 0; j < height; j++) {
-      in_stream >> std::noskipws >> _image[i][j].blue;
-      in_stream >> std::noskipws >> _image[i][j].green;
-      in_stream >> std::noskipws >> _image[i][j].red;
+      in_stream.read(reinterpret_cast<char*>(&_image[i][j]), 3);
       bytes_read += 3;
     }
   }
@@ -93,15 +91,16 @@ uint16_t IO_Handler::read_bits(size_t x)
   return result;
 }
 
-void IO_Handler::write_image(const std::vector<std::vector<Pixel>>& image, const size_t width, const size_t height) {
-    for(size_t i = 0; i < width; i++)
-    {
-        for(size_t j = 0; j < height; j++)
-        {
-            out_stream.write(reinterpret_cast<const char*>(&image[i][j]), sizeof(Pixel));
-            bytes_wrote += 3;
-        }
+void IO_Handler::write_image(const std::vector<std::vector<Pixel>>& image,
+                             const size_t width, const size_t height)
+{
+  for(size_t i = 0; i < width; i++) {
+    for(size_t j = 0; j < height; j++) {
+      out_stream.write(reinterpret_cast<const char*>(&image[i][j]),
+                       sizeof(Pixel));
+      bytes_wrote += 3;
     }
+  }
 }
 
 void IO_Handler::get_header(TGA_header* header)
@@ -110,7 +109,8 @@ void IO_Handler::get_header(TGA_header* header)
   bytes_read += sizeof(TGA_header);
 }
 
-void IO_Handler::write_header(const TGA_header &header) {
+void IO_Handler::write_header(const TGA_header& header)
+{
   out_stream.write(reinterpret_cast<const char*>(&header), sizeof(TGA_header));
   bytes_wrote += sizeof(TGA_header);
 }

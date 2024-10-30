@@ -65,8 +65,7 @@ namespace heuristic {
 
     for(size_t i = dict->size() - 1; i > 255; i--) {
       Block* dict_entry = (*dict)[i];
-      if(dict_entry->height + current_gp->y >
-           image.height || // || image.encoded_at() for no overlap
+      if(dict_entry->height + current_gp->y > image.height ||
          dict_entry->width + current_gp->x > image.width) {
         continue;
       }
@@ -75,8 +74,7 @@ namespace heuristic {
          gp_block->height != dict_entry->height) {
         delete gp_block;
         std::vector<std::vector<uint8_t>> pixels(
-          std::vector<std::vector<uint8_t>>(
-            dict_entry->width, std::vector<uint8_t>(dict_entry->height, 0)));
+          dict_entry->width, std::vector<uint8_t>(dict_entry->height, 0));
         for(size_t x = 0; x < dict_entry->width; x++) {
           for(size_t y = 0; y < dict_entry->height; y++) {
             pixels[x][y] = image.pixels[current_gp->x + x][current_gp->y + y];
@@ -93,7 +91,7 @@ namespace heuristic {
                             ? (0.4 * tolerance)
                             : ((A <= 0.1) ? 0.6 * tolerance : tolerance);
 
-      if(match / max_match_error < _tolerance) {
+      if(match / max_match_error <= _tolerance) {
         // The largest block that fits in tolerance
         *common_block_idx = i;
         *picked_block = gp_block;
@@ -103,8 +101,8 @@ namespace heuristic {
       }
     }
     delete gp_block;
-    std::vector<std::vector<uint8_t>> pixel(std::vector<std::vector<uint8_t>>(
-      1, std::vector<uint8_t>(1, image.pixels[current_gp->x][current_gp->y])));
+    std::vector<std::vector<uint8_t>> pixel(
+      1, std::vector<uint8_t>(1, image.pixels[current_gp->x][current_gp->y]));
 
     gp_block = new Block(1, 1, pixel);
 
@@ -136,8 +134,7 @@ namespace heuristic {
   {
     auto* dict = new Dictionary();
     for(uint16_t color = 0; color < 256; color++) {
-      std::vector<std::vector<uint8_t>> pixel(
-        std::vector<std::vector<uint8_t>>(1, std::vector<uint8_t>(1, 0)));
+      std::vector<std::vector<uint8_t>> pixel(1, std::vector<uint8_t>(1, 0));
       pixel[0][0] = static_cast<uint8_t>(color);
       auto* block = new Block(1, 1, pixel);
       dict->insert(block);
@@ -224,8 +221,7 @@ namespace heuristic {
     size_t w = picked_block->width;
     size_t h = picked_block->height + 1;
 
-    std::vector<std::vector<uint8_t>> pixels(
-      std::vector<std::vector<uint8_t>>(w, std::vector<uint8_t>(h, 0)));
+    std::vector<std::vector<uint8_t>> pixels(w, std::vector<uint8_t>(h, 0));
     for(size_t x = 0; x < w; x++) {
       pixels[x][0] = image.pixels[gp->x + x][gp->y - 1];
       for(size_t y = 1; y < h; y++) {
@@ -251,8 +247,7 @@ namespace heuristic {
     size_t w = picked_block->width + 1;
     size_t h = picked_block->height;
 
-    std::vector<std::vector<uint8_t>> pixels(
-      std::vector<std::vector<uint8_t>>(w, std::vector<uint8_t>(h, 0)));
+    std::vector<std::vector<uint8_t>> pixels(w, std::vector<uint8_t>(h, 0));
     for(size_t y = 0; y < h; y++) {
       pixels[0][y] = image.pixels[gp->x - 1][gp->y + y];
       for(size_t x = 1; x < w; x++) {

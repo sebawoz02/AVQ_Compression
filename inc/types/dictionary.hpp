@@ -20,8 +20,9 @@ typedef struct Dictionary {
   void insert(Block* block);
   void remove(Block* block);
   [[nodiscard]] size_t size() const;
-  [[nodiscard]] size_t get_count(size_t index) const;
-  void inc_usage_count(Block* block);
+
+  [[maybe_unused]] [[nodiscard]] size_t get_count(size_t index) const;
+  [[maybe_unused]] void inc_usage_count(Block* block);
 
   Block* operator[](size_t index) const;
 
