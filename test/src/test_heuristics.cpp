@@ -294,8 +294,7 @@ static void test_growing()
 static void test_gp_update()
 {
   /**
-   * Testcase 1:  cur_gp and [0, 0] should be removed from GPP. [0,1] and [2,0] should be
-   *added.
+   * Testcase 1:  cur_gp and [0, 0] should be removed from GPP. [0,1] and [2,0] should be added.
    *
    *  - Image :
    *          / --------- / ---------- / --------- /
@@ -434,6 +433,7 @@ static void test_dict_update()
     pixels[2][1] = 5;
     pixels[2][2] = 5;
     Image image(pixels, image_width, image_height);
+    image.encoded[1][0] = true;
 
     Dictionary* dict = heuristic::dict_init::range_0_to_255();
     assert(dict != nullptr);
@@ -474,6 +474,7 @@ static void test_dict_update()
     pixels[2][1] = 5;
     pixels[2][2] = 5;
     Image image(pixels, image_width, image_height);
+    image.encoded[0][1] = true;
 
     Dictionary* dict = heuristic::dict_init::range_0_to_255();
     assert(dict != nullptr);

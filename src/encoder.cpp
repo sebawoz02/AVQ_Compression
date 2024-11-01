@@ -28,9 +28,8 @@ void Encoder::encode(const std::vector<std::vector<Pixel>>& image, size_t width,
 void Encoder::adaptive_vector_quantization(Image image)
 {
   // Add pixel [0, 0] to growing points pool
-  auto* init_gp = new Growing_point(0, 0);
   auto* gp_pool = new GP_pool();
-  gp_pool->add(init_gp);
+  gp_pool->add(new Growing_point(0, 0));
 
   // Init dictionary
   Dictionary* dict = dict_init_heur();

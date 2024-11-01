@@ -218,12 +218,17 @@ namespace heuristic {
       dict->insert(b);
       return;
     }
+
     size_t w = picked_block->width;
     size_t h = picked_block->height + 1;
 
     std::vector<std::vector<uint8_t>> pixels(w, std::vector<uint8_t>(h, 0));
     for(size_t x = 0; x < w; x++) {
       pixels[x][0] = image.pixels[gp->x + x][gp->y - 1];
+      if(!image.encoded[gp->x + x][gp->y - 1]) {
+        // Don't add not encoded part to dict
+        return;
+      }
       for(size_t y = 1; y < h; y++) {
         pixels[x][y] = picked_block->pixels[x][y - 1];
       }
@@ -250,6 +255,10 @@ namespace heuristic {
     std::vector<std::vector<uint8_t>> pixels(w, std::vector<uint8_t>(h, 0));
     for(size_t y = 0; y < h; y++) {
       pixels[0][y] = image.pixels[gp->x - 1][gp->y + y];
+      if(!image.encoded[gp->x - 1][gp->y + y]) {
+        // Don't add not encoded part to dict
+        return;
+      }
       for(size_t x = 1; x < w; x++) {
         pixels[x][y] = picked_block->pixels[x - 1][y];
       }
