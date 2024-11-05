@@ -26,10 +26,11 @@ void IO_Handler::flush_buffer()
 IO_Handler::~IO_Handler()
 {
   flush_buffer();
-
-  std::cout << "IO HANDLER:" << std::endl;
-  std::cout << "    in_file size: " << bytes_read << " B" << std::endl;
-  std::cout << "    out_file size: " << bytes_wrote << " B" << std::endl;
+  if(print_summary) {
+    std::cout << "IO HANDLER:" << std::endl;
+    std::cout << "    in_file size: " << bytes_read << " B" << std::endl;
+    std::cout << "    out_file size: " << bytes_wrote << " B" << std::endl;
+  }
 
   in_stream.close();
   out_stream.close();
@@ -37,6 +38,8 @@ IO_Handler::~IO_Handler()
 
 IO_Handler::IO_Handler(char* in_filename, char* out_filename)
 {
+  print_summary = true;
+
   out_bit_count = 0;
   out_buffer = 0;
 
@@ -51,6 +54,9 @@ IO_Handler::IO_Handler(char* in_filename, char* out_filename)
     std::cerr << "Cannot open file: " << in_filename << std::endl;
   }
 
+  if(out_filename == nullptr) {
+    return;
+  }
   out_stream = std::ofstream(out_filename);
   if(!out_stream.is_open()) {
     std::cerr << "Cannot open file: " << out_filename << std::endl;
@@ -113,4 +119,14 @@ void IO_Handler::write_header(const TGA_header& header)
 {
   out_stream.write(reinterpret_cast<const char*>(&header), sizeof(TGA_header));
   bytes_wrote += sizeof(TGA_header);
+}
+
+uint64_t IO_Handler::get_bytes_read() const
+{
+  return bytes_read;
+}
+
+void IO_Handler::set_print_summary(bool ps)
+{
+  print_summary = ps;
 }

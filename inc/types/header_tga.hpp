@@ -2,6 +2,8 @@
 
 #include <cstdint>
 
+#define TGA_HEADER_SIZE 18
+
 #pragma pack(push, 1)
 struct TGA_header {
   uint8_t id_len;

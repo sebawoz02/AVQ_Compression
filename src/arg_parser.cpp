@@ -3,6 +3,19 @@
 #include <string>
 
 namespace arg_parser {
+  static void set_default_values(Args& args, char** argv)
+  {
+    args.in_filename = argv[1];
+    args.out_filename = argv[2];
+    args.tolerance = 0.0;
+    args.match_heur = heuristic::match::top_left_max_se;
+    args.dict_init_heur = heuristic::dict_init::range_0_to_255;
+    args.growing_point_update_heur = heuristic::gp_update::first_from_left;
+    args.growing_heur = heuristic::growing::wave;
+    args.dict_update_heur = heuristic::dict_update::one_column_one_row;
+    args.deletion_heur = heuristic::dict_deletion::fifo;
+  }
+
   Args parse(size_t argc, char** argv)
   {
     Args args{};
@@ -44,15 +57,7 @@ namespace arg_parser {
     }
 
     // Default values
-    args.in_filename = argv[1];
-    args.out_filename = argv[2];
-    args.tolerance = 0.0;
-    args.match_heur = heuristic::match::top_left_max_se;
-    args.dict_init_heur = heuristic::dict_init::range_0_to_255;
-    args.growing_point_update_heur = heuristic::gp_update::first_from_left;
-    args.growing_heur = heuristic::growing::wave;
-    args.dict_update_heur = heuristic::dict_update::one_column_one_row;
-    args.deletion_heur = heuristic::dict_deletion::fifo;
+    set_default_values(args, argv);
 
     bool mode = false;
     for(size_t i = 3; i < argc; i++) {

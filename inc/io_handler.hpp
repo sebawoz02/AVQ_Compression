@@ -2,9 +2,9 @@
 
 #include <cstdint>
 #include <fstream>
+#include <types/header_tga.hpp>
 #include <types/pixel.hpp>
 #include <vector>
-#include <types/header_tga.hpp>
 
 typedef struct IO_Handler {
   IO_Handler(char* in_filename, char* out_filename);
@@ -14,12 +14,15 @@ typedef struct IO_Handler {
   void get_image(size_t width, size_t height,
                  std::vector<std::vector<Pixel>>* image);
   void write_header(const TGA_header& header);
-  void write_image(const std::vector<std::vector<Pixel>>& image, size_t width, size_t height);
-
+  void write_image(const std::vector<std::vector<Pixel>>& image, size_t width,
+                   size_t height);
 
   uint16_t read_bits(size_t x);
   void write(bool bit);
   void flush_buffer();
+
+  [[nodiscard]] uint64_t get_bytes_read() const;
+  void set_print_summary(bool ps);
 
 private:
   uint8_t in_buffer;
@@ -33,4 +36,6 @@ private:
 
   std::ifstream in_stream;
   std::ofstream out_stream;
+
+  bool print_summary;
 } IO_Handler;
