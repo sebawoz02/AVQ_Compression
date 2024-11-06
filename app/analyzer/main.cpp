@@ -1,12 +1,9 @@
+#include <analyzer/stats.hpp>
 #include <cmath>
 #include <fstream>
 #include <io_handler.hpp>
 #include <iostream>
 
-#define NO_POSSIBLE_SYMBOLS 256
-
-static long double calculate_entropy(const uint32_t* freq_dict,
-                                     uint64_t no_symbols);
 static void get_freq_table_for_encoded(std::ifstream& stream,
                                        uint64_t* filesize, uint32_t* freq_dict);
 static void
@@ -43,23 +40,6 @@ static void get_freq_table_for_original(
       freq_dict[image[i][j].blue]++;
     }
   }
-}
-
-static long double calculate_entropy(const uint32_t* freq_dict,
-                                     const uint64_t no_symbols)
-{
-  long double ent =
-    0.0; // H = -1 * sum(for(i in freq_dict){ p(i) * log2(p(i)) })
-  const auto no_sym = static_cast<long double>(no_symbols);
-
-  for(size_t i = 0; i < NO_POSSIBLE_SYMBOLS; i++) {
-    if(freq_dict[i] == 0)
-      continue;
-    const long double p =
-      static_cast<long double>(freq_dict[i]) / no_sym; // p(freq_dict[i])
-    ent -= p * log2l(p);
-  }
-  return ent;
 }
 
 int main(int argc, char** argv)
@@ -104,17 +84,52 @@ int main(int argc, char** argv)
   long double og_entropy = calculate_entropy(og_freq_dict, og_filesize);
   long double encoded_entropy =
     calculate_entropy(encoded_freq_dict, encoded_filesize);
+  long double ent_increase = encoded_entropy / og_entropy * 100.0 - 100.0;
+  long double size_increase =
+    static_cast<long double>(encoded_filesize) / og_filesize * 100.0 - 100.0;
 
   std::cout << "====== Original vs Encoded ======" << std::endl;
-  std::cout << "original filesize: " << og_filesize << " B" << std::endl;
-  std::cout << "encoded filesize: " << encoded_filesize << " B" << std::endl;
-  std::cout << "original entropy: " << og_entropy << std::endl;
-  std::cout << "encoded entropy: " << encoded_entropy << " ("
-            << encoded_entropy / og_entropy * 100.0 - 100 << "%)" << std::endl;
-
+  std::cout << "original filesize: \t" << og_filesize << " B" << std::endl;
+  std::cout << "encoded filesize: \t" << encoded_filesize << " B" << " ("
+            << ((size_increase >= 0) ? "+" : "") << size_increase << "%)"
+            << std::endl;
+  std::cout << "original entropy: \t" << og_entropy << std::endl;
+  std::cout << "encoded entropy: \t" << encoded_entropy << " ("
+            << ((ent_increase >= 0) ? "+" : "") << ent_increase << "%)"
+            << std::endl;
+  std::cout << std::endl;
   encoded.close();
   free(og_freq_dict);
   free(encoded_freq_dict);
+
+  // Compare original with decoded
+  // 1. MSE
+  // 2. PSNR
+  // 2. SSIM
+
+  TGA_header decoded_header{};
+  std::vector<std::vector<Pixel>> decoded_image;
+
+  decoded.get_header(&decoded_header);
+  decoded.get_image(decoded_header.width, decoded_header.height,
+                    &decoded_image);
+
+  double mse = calculate_mse(og_image, decoded_image);
+  double psnr = calculate_psnr(mse);
+  double ssim_r = calculate_ssim_channel(og_image, decoded_image, 'r');
+  double ssim_g = calculate_ssim_channel(og_image, decoded_image, 'g');
+  double ssim_b = calculate_ssim_channel(og_image, decoded_image, 'b');
+  double ssim = calculate_ssim(ssim_r, ssim_g, ssim_b);
+
+  std::cout << "====== Original vs Decoded ======" << std::endl;
+  std::cout << "MSE (Mean Square Error): \t\t" << mse << std::endl;
+  std::cout << "PSNR (Peak Signal-to-Noise Ratio): \t" << psnr << " dB"
+            << std::endl;
+  std::cout << "SSIM (Structural Similarity Index):" << std::endl;
+  std::cout << "\tred:\t" << ssim_r << std::endl;
+  std::cout << "\tgreen:\t" << ssim_g << std::endl;
+  std::cout << "\tblue:\t" << ssim_b << std::endl;
+  std::cout << "\tavg:\t" << ssim << std::endl;
 
   return 0;
 }

@@ -10,7 +10,7 @@ set(SOURCES src/encoder.cpp src/heuristics.cpp src/io_handler.cpp src/decoder.cp
 set(TEST_SOURCES test/src/test_heuristics.cpp test/src/test_dictionary.cpp test/src/test_gp_pool.cpp)
 
 add_executable(avq app/avq/main.cpp ${SOURCES})
-add_executable(analyzer app/analyzer/main.cpp src/io_handler.cpp)
+add_executable(analyzer app/analyzer/main.cpp src/io_handler.cpp src/analyzer/stats.cpp)
 add_executable(test test/main.cpp ${SOURCES} ${TEST_SOURCES})
 
 target_include_directories(avq PRIVATE inc)
