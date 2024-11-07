@@ -36,8 +36,10 @@ IO_Handler::~IO_Handler()
   out_stream.close();
 }
 
-IO_Handler::IO_Handler(char* in_filename, char* out_filename)
+IO_Handler::IO_Handler(char* in_filename, char* out_filename,
+                       Additional_Compression_Mode _ac)
 {
+  ac_mode = _ac;
   print_summary = true;
 
   out_bit_count = 0;

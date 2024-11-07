@@ -14,6 +14,7 @@ namespace arg_parser {
     args.growing_heur = heuristic::growing::wave;
     args.dict_update_heur = heuristic::dict_update::one_column_one_row;
     args.deletion_heur = heuristic::dict_deletion::fifo;
+    args.additional_compression = false;
   }
 
   Args parse(size_t argc, char** argv)
@@ -33,6 +34,8 @@ namespace arg_parser {
       std::cout << "--help         Display this help message\n";
       std::cout << "-e             Encode mode\n";
       std::cout << "-d             Decode mode\n";
+      std::cout
+        << "-ac            Additional adaptive arithmetic compression\n";
       std::cout << "-t <value>     Match tolerance [0.0, 1.0] - default: 0.0\n"
                    "               0 - no tolerance for information loss in "
                    "compression\n";
@@ -150,6 +153,8 @@ namespace arg_parser {
           args.match_heur = heuristic::match::top_left_mse;
         }
         i++;
+      } else if(arg == "-ac") {
+        args.additional_compression = true;
       } else {
         std::cout << "Unknown option: " << arg << "\n";
         return args;

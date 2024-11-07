@@ -49,7 +49,7 @@ int main(int argc, char** argv)
       << "Usage: ./analyzer <original_image> <encoded_file> <decoded_image>"
       << std::endl;
   }
-  IO_Handler original(argv[1], nullptr);
+  IO_Handler original(argv[1], nullptr, NO_ADDITIONAL_COMPRESSION);
   original.set_print_summary(false);
 
   std::ifstream encoded(argv[2]);
@@ -57,7 +57,7 @@ int main(int argc, char** argv)
     std::cerr << "Cannot open file: " << argv[2] << std::endl;
   }
 
-  IO_Handler decoded(argv[3], nullptr);
+  IO_Handler decoded(argv[3], nullptr, NO_ADDITIONAL_COMPRESSION);
   decoded.set_print_summary(false);
 
   TGA_header og_header{};
