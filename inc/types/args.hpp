@@ -13,5 +13,6 @@ typedef struct Args {
   heuristic::gh_t growing_heur;
   heuristic::duh_t dict_update_heur;
   heuristic::dh_t deletion_heur;
+  bool additional_compression;
   bool exit;
 } Args;

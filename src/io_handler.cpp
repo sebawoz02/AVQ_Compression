@@ -14,18 +14,36 @@ void IO_Handler::write(bool bit)
 void IO_Handler::flush_buffer()
 {
   if(out_bit_count > 0) {
-    // Pad remaining bits if needed
-    out_buffer <<= (8 - out_bit_count);
-    out_stream.put(static_cast<char>(out_buffer));
+    if(ac_mode == AC_ENCODING) {
+      out_buffer <<= (8 - out_bit_count);
+      auto bytes = arithmetic_coder->encode(out_buffer);
+      for(size_t i = 0; i < bytes->size(); i++) {
+        out_stream.put(static_cast<char>((*bytes)[i]));
+      }
+      bytes_wrote += bytes->size();
+      delete bytes;
+    } else {
+      // Pad remaining bits if needed
+      out_buffer <<= (8 - out_bit_count);
+      out_stream.put(static_cast<char>(out_buffer));
+      bytes_wrote++;
+    }
     out_buffer = 0;
     out_bit_count = 0;
-    bytes_wrote++;
   }
 }
 
 IO_Handler::~IO_Handler()
 {
   flush_buffer();
+  if(ac_mode == AC_ENCODING) {
+    uint16_t byte = arithmetic_coder->flush_buffer();
+    if(byte != NO_RETURN) {
+      out_stream.put(static_cast<char>(byte));
+      bytes_wrote++;
+    }
+  }
+
   if(print_summary) {
     std::cout << "IO HANDLER:" << std::endl;
     std::cout << "    in_file size: " << bytes_read << " B" << std::endl;
@@ -34,9 +52,15 @@ IO_Handler::~IO_Handler()
 
   in_stream.close();
   out_stream.close();
+  delete arithmetic_coder;
+
+  if(ac_mode == AC_DECODING) {
+    std::filesystem::remove(temp_path);
+  }
 }
 
-IO_Handler::IO_Handler(char* in_filename, char* out_filename)
+IO_Handler::IO_Handler(char* in_filename, char* out_filename,
+                       Additional_Compression_Mode _ac)
 {
   print_summary = true;
 
@@ -49,18 +73,31 @@ IO_Handler::IO_Handler(char* in_filename, char* out_filename)
   bytes_read = 0;
   bytes_wrote = 0;
 
-  in_stream = std::ifstream(in_filename);
-  if(!in_stream.is_open()) {
-    std::cerr << "Cannot open file: " << in_filename << std::endl;
+  if(in_filename != nullptr) {
+    in_stream = std::ifstream(in_filename);
+    if(!in_stream.is_open()) {
+      std::cerr << "Cannot open file: " << in_filename << std::endl;
+    }
   }
 
-  if(out_filename == nullptr) {
-    return;
+  if(out_filename != nullptr) {
+    out_stream = std::ofstream(out_filename);
+    if(!out_stream.is_open()) {
+      std::cerr << "Cannot open file: " << out_filename << std::endl;
+    }
   }
-  out_stream = std::ofstream(out_filename);
-  if(!out_stream.is_open()) {
-    std::cerr << "Cannot open file: " << out_filename << std::endl;
+  if(_ac == AC_ENCODING) {
+    arithmetic_coder = new Arithmetic_Coder();
+  } else if(_ac == AC_DECODING) {
+    arithmetic_coder = new Arithmetic_Coder();
+    auto path = arithmetic_coder->decode(&in_stream);
+    in_stream.close();
+    in_stream = std::ifstream(path);
+    temp_path = path;
+  } else {
+    arithmetic_coder = nullptr;
   }
+  ac_mode = _ac;
 }
 
 void IO_Handler::get_image(size_t width, size_t height,

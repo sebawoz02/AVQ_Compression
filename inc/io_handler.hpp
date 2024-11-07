@@ -5,9 +5,18 @@
 #include <types/header_tga.hpp>
 #include <types/pixel.hpp>
 #include <vector>
+#include <arithmetic_coder.hpp>
+
+typedef enum Additional_Compression_Mode
+{
+    NO_ADDITIONAL_COMPRESSION = 0,
+    AC_ENCODING = 1,
+    AC_DECODING = 2,
+} Additional_Compression_Mode;
+
 
 typedef struct IO_Handler {
-  IO_Handler(char* in_filename, char* out_filename);
+  IO_Handler(char* in_filename, char* out_filename, Additional_Compression_Mode _ac);
   ~IO_Handler();
 
   void get_header(TGA_header* header);
@@ -38,4 +47,7 @@ private:
   std::ofstream out_stream;
 
   bool print_summary;
+  Additional_Compression_Mode ac_mode;
+  Arithmetic_Coder* arithmetic_coder;
+  std::filesystem::path temp_path;
 } IO_Handler;
