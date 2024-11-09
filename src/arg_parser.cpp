@@ -10,7 +10,7 @@ namespace arg_parser {
     args.tolerance = 0.0;
     args.match_heur = heuristic::match::top_left_max_se;
     args.dict_init_heur = heuristic::dict_init::range_0_to_255;
-    args.growing_point_update_heur = heuristic::gp_update::first_from_left;
+    args.growing_point_update_heur = heuristic::gpp_update::first_from_left;
     args.growing_heur = heuristic::growing::wave;
     args.dict_update_heur = heuristic::dict_update::one_column_one_row;
     args.deletion_heur = heuristic::dict_deletion::fifo;

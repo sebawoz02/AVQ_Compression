@@ -144,7 +144,7 @@ namespace heuristic {
   }
 
   // GP UPDATE
-  void gp_update::first_from_left(Image& image, GP_pool* growing_points,
+  void gpp_update::first_from_left(Image& image, GP_pool* growing_points,
                                   Growing_point* cur_gp)
   {
     growing_points->remove(cur_gp);

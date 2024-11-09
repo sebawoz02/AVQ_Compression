@@ -333,7 +333,7 @@ static void test_gp_update()
     assert((*gpp)[0] == cur_gp);
     assert((*gpp)[1] == obsolete_gp);
 
-    heuristic::gp_update::first_from_left(image, gpp, cur_gp);
+    heuristic::gpp_update::first_from_left(image, gpp, cur_gp);
 
     assert(gpp->size() == 2);
     assert((*gpp)[0]->x == 2);
@@ -388,7 +388,7 @@ static void test_gp_update()
     assert((*gpp)[0] == cur_gp);
     assert((*gpp)[1] == another_gp);
 
-    heuristic::gp_update::first_from_left(image, gpp, cur_gp);
+    heuristic::gpp_update::first_from_left(image, gpp, cur_gp);
 
     assert(gpp->size() == 2);
     assert((*gpp)[0] == another_gp);

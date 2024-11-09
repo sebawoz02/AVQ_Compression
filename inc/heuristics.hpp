@@ -32,7 +32,7 @@ namespace heuristic {
     Dictionary* range_0_to_255();
   }
 
-  namespace gp_update {
+  namespace gpp_update {
     void first_from_left(Image& image, GP_pool* growing_points,
                          Growing_point* cur_gp);
   }
