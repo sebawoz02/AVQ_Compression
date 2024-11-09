@@ -5,6 +5,7 @@
 #include <types/header_tga.hpp>
 #include <types/pixel.hpp>
 #include <vector>
+#include <filesystem>
 
 typedef enum Additional_Compression_Mode {
   NO_ADDITIONAL_COMPRESSION = 0,
@@ -13,7 +14,7 @@ typedef enum Additional_Compression_Mode {
 } Additional_Compression_Mode;
 
 typedef struct IO_Handler {
-  IO_Handler(char* in_filename, char* out_filename,
+  IO_Handler(char* _in_filename, char* _out_filename,
              Additional_Compression_Mode _ac);
   ~IO_Handler();
 
@@ -44,6 +45,10 @@ private:
   std::ifstream in_stream;
   std::ofstream out_stream;
 
+  char* in_filename;
+  char* out_filename;
+
   bool print_summary;
   Additional_Compression_Mode ac_mode;
+  std::filesystem::path temp_filepath;
 } IO_Handler;

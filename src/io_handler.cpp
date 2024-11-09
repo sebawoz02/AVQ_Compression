@@ -1,5 +1,6 @@
 #include <io_handler.hpp>
 #include <iostream>
+#include <arithmetic_coder.hpp>
 
 void IO_Handler::write(bool bit)
 {
@@ -26,6 +27,35 @@ void IO_Handler::flush_buffer()
 IO_Handler::~IO_Handler()
 {
   flush_buffer();
+
+  if(ac_mode == AC_ENCODING)
+  {
+      out_stream.close();
+      in_stream.close();
+      in_stream = std::ifstream(temp_filepath);
+      if(!in_stream.is_open()) {
+          std::cerr << "Cannot open temp file: " << temp_filepath << std::endl;
+      }
+      out_stream = std::ofstream(out_filename);
+      if(!out_stream.is_open()) {
+          std::cerr << "Cannot open file: " << out_filename << std::endl;
+      }
+      Arithmetic_Coder ac_coder(&in_stream);
+      uint64_t bytes = ac_coder.encode(&out_stream);
+
+      out_stream.close();
+      in_stream.close();
+      std::filesystem::remove(temp_filepath);
+      return;
+  }
+  if(ac_mode == AC_DECODING)
+  {
+      in_stream.close();
+      out_stream.close();
+      std::filesystem::remove(temp_filepath);
+      return;
+  }
+
   if(print_summary) {
     std::cout << "IO HANDLER:" << std::endl;
     std::cout << "    in_file size: " << bytes_read << " B" << std::endl;
@@ -36,9 +66,12 @@ IO_Handler::~IO_Handler()
   out_stream.close();
 }
 
-IO_Handler::IO_Handler(char* in_filename, char* out_filename,
+IO_Handler::IO_Handler(char* _in_filename, char* _out_filename,
                        Additional_Compression_Mode _ac)
 {
+  in_filename = _in_filename;
+  out_filename = _out_filename;
+
   ac_mode = _ac;
   print_summary = true;
 
@@ -56,8 +89,27 @@ IO_Handler::IO_Handler(char* in_filename, char* out_filename,
     std::cerr << "Cannot open file: " << in_filename << std::endl;
   }
 
+  if(ac_mode == AC_DECODING)
+  {
+      Arithmetic_Coder ac_coder(&in_stream);
+      temp_filepath = ac_coder.decode();
+      in_stream.close();
+      in_stream = std::ifstream(temp_filepath);
+  }
+
   if(out_filename == nullptr) {
     return;
+  }
+
+  if(ac_mode == AC_ENCODING)
+  {
+      std::filesystem::path temp_dir = std::filesystem::temp_directory_path();
+      temp_filepath = temp_dir / "tempfile.txt";
+      out_stream = std::ofstream(temp_filepath);
+      if(!out_stream.is_open()) {
+          std::cerr << "Cannot open temp file: " << temp_filepath << std::endl;
+      }
+      return;
   }
   out_stream = std::ofstream(out_filename);
   if(!out_stream.is_open()) {
