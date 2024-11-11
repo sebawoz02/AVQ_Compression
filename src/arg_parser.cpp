@@ -14,7 +14,6 @@ namespace arg_parser {
     args.growing_heur = heuristic::growing::wave;
     args.dict_update_heur = heuristic::dict_update::one_column_one_row;
     args.deletion_heur = heuristic::dict_deletion::fifo;
-    args.additional_compression = false;
   }
 
   Args parse(size_t argc, char** argv)
@@ -153,8 +152,6 @@ namespace arg_parser {
           args.match_heur = heuristic::match::top_left_mse;
         }
         i++;
-      } else if(arg == "-ac") {
-        args.additional_compression = true;
       } else {
         std::cout << "Unknown option: " << arg << "\n";
         return args;

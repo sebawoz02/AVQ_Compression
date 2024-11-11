@@ -8,19 +8,7 @@ int main(int argc, char** argv)
   if(args.exit) {
     return 1;
   }
-  IO_Handler* io_handler;
-  if(args.additional_compression) {
-    if(!args.mode) {
-      io_handler =
-        new IO_Handler(args.in_filename, args.out_filename, AC_ENCODING);
-    } else {
-      io_handler =
-        new IO_Handler(args.in_filename, args.out_filename, AC_DECODING);
-    }
-  } else {
-    io_handler = new IO_Handler(args.in_filename, args.out_filename,
-                                NO_ADDITIONAL_COMPRESSION);
-  }
+  IO_Handler* io_handler = new IO_Handler(args.in_filename, args.out_filename);
 
   if(!args.mode) {
     TGA_header header{};
