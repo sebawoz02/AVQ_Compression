@@ -3,7 +3,7 @@ project(AVQ_compression)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_COMPILER "g++")
-set(CMAKE_CXX_FLAGS "-Wall -Wextra")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -O3")
 
 set(SOURCES src/encoder.cpp src/heuristics.cpp src/io_handler.cpp src/decoder.cpp src/arg_parser.cpp
         src/types/dictionary.cpp src/types/gp_pool.cpp src/types/image.cpp src/types/block.cpp)

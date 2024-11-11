@@ -2,6 +2,8 @@
 
 #include <types/block.hpp>
 
+#define DICT_SIZE_LIMIT 512
+
 struct Dict_entry {
   Dict_entry(Block* b, Dict_entry* n, Dict_entry* p)
     : block(b), usage_count(0), prev(p), next(n){};
@@ -19,6 +21,7 @@ typedef struct Dictionary {
 
   void insert(Block* block);
   void remove(Block* block);
+  void remove(size_t index);
   [[nodiscard]] size_t size() const;
 
   [[maybe_unused]] [[nodiscard]] size_t get_count(size_t index) const;

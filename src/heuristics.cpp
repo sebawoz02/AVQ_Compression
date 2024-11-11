@@ -1,7 +1,6 @@
 #include <cmath>
 #include <heuristics.hpp>
 
-#define DICT_SIZE_LIMIT 512
 #define MSE_MAX 65025
 
 namespace heuristic {
@@ -150,8 +149,8 @@ namespace heuristic {
     growing_points->remove(cur_gp);
     growing_points->remove_obsolete(image);
 
-    // LIMIT GPP SIZE TO 50 to speed up this process
-    if(growing_points->size() > 50) {
+    // LIMIT GPP SIZE TO 48 to speed up this process
+    if(growing_points->size() > GPP_SIZE_LIMIT) {
       return;
     }
 
@@ -277,8 +276,8 @@ namespace heuristic {
   // DICT DELETION
   void dict_deletion::fifo(Dictionary* dict)
   {
-    while(dict->size() > DICT_SIZE_LIMIT) {
-      dict->remove((*dict)[256]); // DON'T TOUCH 1x1 blocks
+    while(dict->size() >= DICT_SIZE_LIMIT) {
+      dict->remove(256); //DON'T TOUCH 1x1 blocks
     }
   }
 } // namespace heuristic

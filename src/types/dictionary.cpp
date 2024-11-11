@@ -138,3 +138,24 @@ Dict_entry* Dictionary::get_entry_at(size_t index) const
     ent->usage_count++;
   }
 }
+
+void Dictionary::remove(size_t index)
+{
+  Dict_entry* entry;
+  len--;
+  if(index == 0) {
+    entry = first_entry;
+    first_entry = entry->next;
+    first_entry->prev = nullptr;
+    delete first_entry;
+    return;
+  }
+
+  entry = get_entry_at(index);
+
+  entry->prev->next = entry->next;
+  if(entry->next != nullptr) {
+    entry->next->prev = entry->prev;
+  }
+  delete entry;
+}

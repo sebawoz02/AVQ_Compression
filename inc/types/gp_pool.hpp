@@ -4,6 +4,8 @@
 #include <types/growing_point.hpp>
 #include <types/image.hpp>
 
+#define GPP_SIZE_LIMIT 48
+
 typedef struct GP_pool_entry {
   explicit GP_pool_entry(Growing_point* _gp): next(nullptr), gp(_gp){};
   ~GP_pool_entry();
