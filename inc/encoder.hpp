@@ -5,6 +5,11 @@
 #include <io_handler.hpp>
 #include <types/pixel.hpp>
 
+/**
+ * @struct Encoder
+ * @brief A encoder structure that stores all the necessary data and
+ *        displays functions needed in the compression process.
+ */
 typedef struct Encoder {
   Encoder(IO_Handler* _io_handler, heuristic::mh_t mh, heuristic::idh_t idh,
           heuristic::gpuh_t gpuh, heuristic::gh_t gh, heuristic::duh_t duh,
@@ -17,15 +22,15 @@ typedef struct Encoder {
               size_t height);
 
 private:
-  IO_Handler* io_handler;
-  heuristic::mh_t match_heur;
-  heuristic::idh_t dict_init_heur;
-  heuristic::gpuh_t growing_point_update_heur;
-  heuristic::gh_t growing_heur;
-  heuristic::duh_t dict_update_heur;
-  heuristic::dh_t deletion_heur;
+  IO_Handler* io_handler;                       ///> Input/Output handler
+  heuristic::mh_t match_heur;                   ///> Match heuristic
+  heuristic::idh_t dict_init_heur;              ///> Dictionary Init heuristic
+  heuristic::gpuh_t growing_point_update_heur;  ///> Growing Point Pool Update heuristic
+  heuristic::gh_t growing_heur;                 ///> Growing heuristic
+  heuristic::duh_t dict_update_heur;            ///> Dictionary Update heuristic
+  heuristic::dh_t deletion_heur;                ///> Dictionary entry deletion heuristic
 
-  double tolerance;
+  double tolerance;                             ///> Information loss toleration
 
   void adaptive_vector_quantization(Image image);
 } Encoder;

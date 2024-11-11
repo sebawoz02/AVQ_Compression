@@ -1,6 +1,18 @@
 #include <stdexcept> // for std::out_of_range
 #include <types/dictionary.hpp>
 
+struct Dict_entry{
+    Dict_entry(Block* b, Dict_entry* n, Dict_entry* p)
+    : block(b), usage_count(0), prev(p), next(n){};
+    ~Dict_entry();
+
+    Block* block;
+    size_t usage_count;
+    Dict_entry* prev;
+    Dict_entry* next;
+};
+
+
 Dict_entry::~Dict_entry()
 {
   delete block;
@@ -15,7 +27,7 @@ Dictionary::~Dictionary()
   }
 }
 
-void Dictionary::insert(Block* block)
+void Dictionary::insert(Block* const block)
 {
   if(len == 0) {
     first_entry = new Dict_entry(block, nullptr, nullptr);
@@ -61,7 +73,7 @@ void Dictionary::insert(Block* block)
   }
 }
 
-void Dictionary::remove(Block* block)
+void Dictionary::remove(Block* const block)
 {
   if(len == 0) {
     return;
@@ -97,17 +109,17 @@ size_t Dictionary::size() const
   return len;
 }
 
-Block* Dictionary::operator[](size_t index) const
+Block* Dictionary::operator[](size_t const index) const
 {
   return get_entry_at(index)->block;
 }
 
-[[maybe_unused]] size_t Dictionary::get_count(size_t index) const
+[[maybe_unused]] size_t Dictionary::get_count(size_t const index) const
 {
   return get_entry_at(index)->usage_count;
 }
 
-Dict_entry* Dictionary::get_entry_at(size_t index) const
+Dict_entry* Dictionary::get_entry_at(size_t const index) const
 {
   if(index >= len) {
     throw std::out_of_range("Dictionary index out of range");
@@ -139,7 +151,7 @@ Dict_entry* Dictionary::get_entry_at(size_t index) const
   }
 }
 
-void Dictionary::remove(size_t index)
+void Dictionary::remove(size_t const index)
 {
   Dict_entry* entry;
   len--;

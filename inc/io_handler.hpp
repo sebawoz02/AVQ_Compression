@@ -6,15 +6,12 @@
 #include <types/pixel.hpp>
 #include <vector>
 
-typedef enum Additional_Compression_Mode {
-  NO_ADDITIONAL_COMPRESSION = 0,
-  AC_ENCODING = 1,
-  AC_DECODING = 2,
-} Additional_Compression_Mode;
-
+/**
+ * @struct IO_Handler
+ * @brief Structure responsible for all input and output file handling
+ */
 typedef struct IO_Handler {
-  IO_Handler(char* in_filename, char* out_filename,
-             Additional_Compression_Mode _ac);
+  IO_Handler(char* in_filename, char* out_filename);
   ~IO_Handler();
 
   void get_header(TGA_header* header);
@@ -32,18 +29,17 @@ typedef struct IO_Handler {
   void set_print_summary(bool ps);
 
 private:
-  uint8_t in_buffer;
-  uint8_t out_buffer;
+  uint8_t in_buffer;        ///> Input buffer - used to read single bits
+  uint8_t out_buffer;       ///> Output buffer - used to write single bits
 
-  size_t in_bit_count;
-  size_t out_bit_count;
+  size_t in_bit_count;      ///> Input buffer index
+  size_t out_bit_count;     ///> Output buffer index
 
-  uint64_t bytes_read;
-  uint64_t bytes_wrote;
+  uint64_t bytes_read;      ///> Bytes read
+  uint64_t bytes_wrote;     ///> Bytes wrote
 
-  std::ifstream in_stream;
-  std::ofstream out_stream;
+  std::ifstream in_stream;  ///> Input stream
+  std::ofstream out_stream; ///> Output stream
 
-  bool print_summary;
-  Additional_Compression_Mode ac_mode;
+  bool print_summary;       ///> If true summary is printed at the destruction
 } IO_Handler;

@@ -1,5 +1,13 @@
 #include <types/gp_pool.hpp>
 
+typedef struct GP_pool_entry {
+    explicit GP_pool_entry(Growing_point* _gp): next(nullptr), gp(_gp){};
+    ~GP_pool_entry();
+
+    GP_pool_entry* next;
+    Growing_point* gp;
+} GP_pool_entry;
+
 GP_pool::~GP_pool()
 {
   GP_pool_entry* ptr = head;

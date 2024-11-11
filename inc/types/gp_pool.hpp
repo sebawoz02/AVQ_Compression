@@ -6,14 +6,16 @@
 
 #define GPP_SIZE_LIMIT 48
 
-typedef struct GP_pool_entry {
-  explicit GP_pool_entry(Growing_point* _gp): next(nullptr), gp(_gp){};
-  ~GP_pool_entry();
+/**
+ * @struct GP_pool_entry
+ * @brief Represents Growing Points Pool entry
+ */
+struct GP_pool_entry;
 
-  GP_pool_entry* next;
-  Growing_point* gp;
-} GP_pool_entry;
-
+/**
+ * @struct GP_pool
+ * @brief Growing Points Pool
+ */
 typedef struct GP_pool {
   ~GP_pool();
   GP_pool(): head(nullptr), _size(0){};
@@ -29,6 +31,6 @@ typedef struct GP_pool {
   [[__nodiscard__]] size_t size() const;
 
 private:
-  GP_pool_entry* head;
-  size_t _size;
+  GP_pool_entry* head;  ///< First entry
+  size_t _size;         ///< Growing Points Pool length/size
 } GP_pool;

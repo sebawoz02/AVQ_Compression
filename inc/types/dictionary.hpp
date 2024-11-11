@@ -4,17 +4,16 @@
 
 #define DICT_SIZE_LIMIT 512
 
-struct Dict_entry {
-  Dict_entry(Block* b, Dict_entry* n, Dict_entry* p)
-    : block(b), usage_count(0), prev(p), next(n){};
-  ~Dict_entry();
+/**
+ * @struct Dict_entry
+ * @brief Holds all information about one dictionary entry
+ */
+struct Dict_entry;
 
-  Block* block;
-  size_t usage_count;
-  Dict_entry* prev;
-  Dict_entry* next;
-};
-
+/**
+ * @struct Dictionary
+ * @brief Dictionary structure with all blocks used to match with Growing Points.
+ */
 typedef struct Dictionary {
   Dictionary(): len(0), first_entry(nullptr), last_entry(nullptr){};
   ~Dictionary();
@@ -30,9 +29,9 @@ typedef struct Dictionary {
   Block* operator[](size_t index) const;
 
 private:
-  size_t len;
-  Dict_entry* first_entry;
-  Dict_entry* last_entry;
+  size_t len;               ///< Dictionaries length
+  Dict_entry* first_entry;  ///< First entry - head
+  Dict_entry* last_entry;   ///< Last entry - tail
 
   [[nodiscard]] Dict_entry* get_entry_at(size_t index) const;
 } Dictionary;

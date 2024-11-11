@@ -6,17 +6,24 @@
 #include <types/image.hpp>
 
 namespace heuristic {
+
+  ///> Match heuristic function type
   using mh_t = void (*)(Dictionary*, double, Image&, Growing_point*, size_t*,
                         Block**);
 
+  ///> Dictionary Init heuristic function type
   using idh_t = Dictionary* (*)();
 
+  ///> Growing Point Pool Update heuristic function type
   using gpuh_t = void (*)(Image&, GP_pool*, Growing_point*);
 
+  ///> Growing heuristic function type
   using gh_t = Growing_point* (*)(GP_pool*);
 
+  ///> Dictionary Update heuristic function type
   using duh_t = void (*)(Dictionary*, Block*, Growing_point*, Image&);
 
+  ///> Dictionary entry deletion heuristic function type
   using dh_t = void (*)(Dictionary*);
 
   namespace match {
