@@ -8,7 +8,7 @@ namespace arg_parser {
     args.in_filename = argv[1];
     args.out_filename = argv[2];
     args.tolerance = 0.0;
-    args.match_heur = heuristic::match::top_left_max_se;
+    args.match_heur = heuristic::match::max_se;
     args.dict_init_heur = heuristic::dict_init::range_0_to_255;
     args.growing_point_update_heur = heuristic::gpp_update::first_from_left;
     args.growing_heur = heuristic::growing::wave;
@@ -149,7 +149,7 @@ namespace arg_parser {
           return args;
         }
         if(m == 1) {
-          args.match_heur = heuristic::match::top_left_mse;
+          args.match_heur = heuristic::match::mse;
         }
         i++;
       } else {

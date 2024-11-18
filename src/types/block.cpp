@@ -1,6 +1,6 @@
 #include <types/block.hpp>
 
-void Block::mean_and_variance(double* mean, double *variance) {
+void Block::mean_and_variance(double& mean, double& variance) {
     double _mean = 0.0;
     auto size = static_cast<double>(width * height);
 
@@ -17,6 +17,6 @@ void Block::mean_and_variance(double* mean, double *variance) {
             _variance = (diff * diff) / size;
         }
     }
-    *mean = _mean;
-    *variance = _variance;
+    mean = _mean;
+    variance = _variance;
 }

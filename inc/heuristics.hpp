@@ -27,12 +27,15 @@ namespace heuristic {
   using dh_t = void (*)(Dictionary*);
 
   namespace match {
-    void top_left_mse(Dictionary* dict, double tolerance, Image& image,
-                      Growing_point* current_gp, size_t* common_block_idx,
-                      Block** picked_block);
-    void top_left_max_se(Dictionary* dict, double tolerance, Image& image,
-                         Growing_point* current_gp, size_t* common_block_idx,
-                         Block** picked_block);
+    void mse(Dictionary* dict, double tolerance, Image& image,
+             Growing_point* current_gp, size_t* common_block_idx,
+             Block** picked_block);
+    void max_se(Dictionary* dict, double tolerance, Image& image,
+                Growing_point* current_gp, size_t* common_block_idx,
+                Block** picked_block);
+    void euclidean(Dictionary* dict, double tolerance, Image& image,
+                   Growing_point* current_gp, size_t* common_block_idx,
+                   Block** picked_block);
   } // namespace match
 
   namespace dict_init {

@@ -5,12 +5,13 @@
 
 namespace heuristic {
 
-  static double mse(Block* b1, Block* b2);
-  static double max_se(Block* b1, Block* b2);
+  static double _mse(Block* b1, Block* b2);
+  static double _max_se(Block* b1, Block* b2);
+  static double _euclidean(Block* b1, Block* b2);
   static void mark_image(Image& image, size_t width, size_t height, size_t x,
                          size_t y);
 
-  static double mse(Block* b1, Block* b2)
+  static double _mse(Block* b1, Block* b2)
   {
     double square_error = 0.0;
     size_t size = b1->width * b1->height;
@@ -25,7 +26,7 @@ namespace heuristic {
     return square_error;
   }
 
-  static double max_se(Block* b1, Block* b2)
+  static double _max_se(Block* b1, Block* b2)
   {
     double max_square_error = 0.0;
 
@@ -40,6 +41,20 @@ namespace heuristic {
     }
 
     return max_square_error;
+  }
+
+  static double _euclidean(Block* b1, Block* b2)
+  {
+    double euclidean_distance = 0.0;
+      for(size_t i = 0; i < b1->width; ++i) {
+          for(size_t j = 0; j < b1->height; ++j) {
+              auto diff = static_cast<int16_t>(b1->pixels[i][j] - b2->pixels[i][j]);
+              double square = diff * diff;
+              euclidean_distance += square;
+          }
+      }
+
+      return euclidean_distance;
   }
 
   static void mark_image(Image& image, size_t width, size_t height, size_t x,
@@ -84,7 +99,7 @@ namespace heuristic {
 
       const double match = match_func(gp_block, (*dict)[i]);
       double mean, variance;
-      gp_block->mean_and_variance(&mean, &variance);
+      gp_block->mean_and_variance(mean, variance);
       double A = variance / mean;
       double _tolerance = (A <= 0.05)
                             ? (0.4 * tolerance)
@@ -112,20 +127,28 @@ namespace heuristic {
   }
 
   // MATCH
-  void match::top_left_mse(Dictionary* dict, double tolerance, Image& image,
-                           Growing_point* current_gp, size_t* common_block_idx,
-                           Block** picked_block)
+  void match::mse(Dictionary* dict, double tolerance, Image& image,
+                  Growing_point* current_gp, size_t* common_block_idx,
+                  Block** picked_block)
   {
-    top_left(mse, MSE_MAX, dict, tolerance, image, current_gp, common_block_idx,
+    top_left(_mse, MSE_MAX, dict, tolerance, image, current_gp, common_block_idx,
              picked_block);
   }
 
-  void match::top_left_max_se(Dictionary* dict, double tolerance, Image& image,
-                              Growing_point* current_gp,
-                              size_t* common_block_idx, Block** picked_block)
+  void match::max_se(Dictionary* dict, double tolerance, Image& image,
+                     Growing_point* current_gp, size_t* common_block_idx,
+                     Block** picked_block)
   {
-    top_left(max_se, MSE_MAX, dict, tolerance, image, current_gp,
+    top_left(_max_se, MSE_MAX, dict, tolerance, image, current_gp,
              common_block_idx, picked_block);
+  }
+
+  void match::euclidean(Dictionary *dict, double tolerance, Image &image,
+                        Growing_point *current_gp, size_t *common_block_idx,
+                        Block **picked_block)
+  {
+      top_left(_euclidean, MSE_MAX, dict, tolerance, image, current_gp,
+               common_block_idx, picked_block);
   }
 
   // DICT INIT
