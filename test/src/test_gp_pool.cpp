@@ -20,13 +20,12 @@ static void test_add()
 {
     auto* gpp = new GP_pool();
     assert(gpp != nullptr);
-    assert((*gpp)[0] == nullptr);
+    assert(gpp->size() == 0);
 
     Growing_point* gp1 = new Growing_point(1, 1);
     gpp->add(gp1);
 
     assert((*gpp)[0] == gp1);
-    assert((*gpp)[1] == nullptr);
     assert((*gpp)[0]->x == 1);
     assert((*gpp)[0]->y == 1);
 
@@ -34,7 +33,6 @@ static void test_add()
     gpp->add(gp2);
     assert((*gpp)[0] == gp1);
     assert((*gpp)[1] == gp2);
-    assert((*gpp)[2] == nullptr);
     assert((*gpp)[0]->x == 1);
     assert((*gpp)[0]->y == 1);
     assert((*gpp)[1]->x == 2);
@@ -47,7 +45,7 @@ static void test_contains()
 {
     auto* gpp = new GP_pool();
     assert(gpp != nullptr);
-    assert((*gpp)[0] == nullptr);
+    assert(gpp->size() == 0);
 
     const size_t gp1_x = 1;
     const size_t gp1_y = 1;
@@ -73,7 +71,7 @@ static void test_remove()
 {
     auto* gpp = new GP_pool();
     assert(gpp != nullptr);
-    assert((*gpp)[0] == nullptr);
+    assert(gpp->size() == 0);
 
     Growing_point* gp1 = new Growing_point(1, 1);
     gpp->add(gp1);
@@ -85,10 +83,10 @@ static void test_remove()
 
     gpp->remove(gp1);
     assert((*gpp)[0] == gp2);
-    assert((*gpp)[1] == nullptr);
+    assert(gpp->size() == 1);
 
     gpp->remove(gp2);
-    assert((*gpp)[0] == nullptr);
+    assert(gpp->size() == 0);
 
     delete gpp;
 }

@@ -198,7 +198,8 @@ namespace heuristic {
   Growing_point* growing::wave(GP_pool* gp_pool)
   {
     Growing_point* best = (*gp_pool)[0];
-    for(size_t i = 1; (*gp_pool)[i] != nullptr; i++) {
+    uint8_t gpp_size = gp_pool->size();
+    for(uint8_t i = 1; i < gpp_size; i++) {
       Growing_point* cur = (*gp_pool)[i];
       if(best->x + best->y > cur->x + cur->y) {
         best = cur;
@@ -210,8 +211,9 @@ namespace heuristic {
 
   Growing_point* growing::diagonal(GP_pool* gp_pool)
   {
-    Growing_point* best = (*gp_pool)[0];
-    for(size_t i = 1; (*gp_pool)[i] != nullptr; i++) {
+      Growing_point* best = (*gp_pool)[0];
+      uint8_t gpp_size = gp_pool->size();
+      for(uint8_t i = 1; i < gpp_size; i++) {
       Growing_point* cur = (*gp_pool)[i];
       if(abs((int)best->x - (int)best->y) > abs((int)cur->x - (int)cur->y)) {
         best = cur;

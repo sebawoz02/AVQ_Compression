@@ -20,7 +20,7 @@ typedef struct GP_pool {
   ~GP_pool();
   GP_pool(): head(nullptr), tail(nullptr), _size(0){};
 
-  Growing_point* operator[](size_t index) const;
+  Growing_point* operator[](uint8_t index) const;
   [[nodiscard]] bool contains(size_t x, size_t y) const;
 
   void add(Growing_point* gp_new);
@@ -28,7 +28,7 @@ typedef struct GP_pool {
   void remove_obsolete(Image& image);
 
   [[__nodiscard__]] Growing_point* last();
-  [[__nodiscard__]] size_t size() const;
+  [[__nodiscard__]] uint8_t size() const;
 
 private:
   GP_pool_entry* head;  ///< First entry
