@@ -29,7 +29,7 @@ typedef struct Dictionary {
   Block* operator[](size_t index) const;
 
 private:
-  size_t len;               ///< Dictionaries length
+  uint16_t len;             ///< Dictionaries length
   Dict_entry* first_entry;  ///< First entry - head
   Dict_entry* last_entry;   ///< Last entry - tail
 
