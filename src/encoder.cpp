@@ -28,20 +28,19 @@ void Encoder::encode(const std::vector<std::vector<Pixel>>& image, size_t width,
 void Encoder::adaptive_vector_quantization(Image image)
 {
   // Add pixel [0, 0] to growing points pool
-  auto* gp_pool = new GP_pool();
-  gp_pool->add(new Growing_point(0, 0));
-
+  GP_pool gp_pool;
+  gp_pool.add(new Growing_point(0, 0));
   // Init dictionary
   Dictionary* dict = dict_init_heur();
 
   // While growing points pool has more elements
-  while(gp_pool->size() > 0) {
+  while(gp_pool.size() > 0) {
     // Determine next growing point
-    Growing_point* gp = growing_heur(gp_pool);
+    GP_pool_entry* gp_p = growing_heur(gp_pool);
 
     size_t common_block_idx;
     Block* picked_block;
-    match_heur(dict, tolerance, image, gp, &common_block_idx, &picked_block);
+    match_heur(*dict, tolerance, image, gp_p->gp, &common_block_idx, &picked_block);
 
     auto bits_to_transmit =
       static_cast<int8_t>(std::ceil(log2(static_cast<double>(dict->size()))));
@@ -52,14 +51,13 @@ void Encoder::adaptive_vector_quantization(Image image)
       io_handler->write(bit);
     }
     // Update dict
-    dict_update_heur(dict, picked_block, gp, image);
+    dict_update_heur(*dict, picked_block, gp_p->gp, image);
     delete picked_block;
     // Check if dictionary is full and if so use deletion heuristic
-    deletion_heur(dict);
+    deletion_heur(*dict);
     // Update growing points pool
-    growing_point_update_heur(image, gp_pool, gp);
+    growing_point_update_heur(image, gp_pool, gp_p);
   }
 
   delete dict;
-  delete gp_pool;
 }
