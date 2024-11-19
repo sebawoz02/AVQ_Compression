@@ -49,10 +49,39 @@ IO_Handler::IO_Handler(char* in_filename, char* out_filename)
   bytes_read = 0;
   bytes_wrote = 0;
 
+
+  std::string input_filename(in_filename);
+  if(input_filename.ends_with(".tga"))
+  {
+    input_format = FORMAT_TGA;
+  }else if(input_filename.ends_with(".pgm"))
+  {
+    input_format = FORMAT_PGM;
+  }
+  else
+  {
+    input_format = FORMAT_UNKNOWN;
+  }
+
+  std::string output_filename(out_filename);
+  if(output_filename.ends_with(".tga"))
+  {
+    output_format = FORMAT_TGA;
+  }else if(output_filename.ends_with(".pgm"))
+  {
+    output_format = FORMAT_PGM;
+  }
+  else
+  {
+    output_format = FORMAT_UNKNOWN;
+  }
+
   in_stream = std::ifstream(in_filename);
   if(!in_stream.is_open()) {
     std::cerr << "Cannot open file: " << in_filename << std::endl;
+    input_format = FORMAT_UNKNOWN;
   }
+
 
   if(out_filename == nullptr) {
     return;
@@ -63,7 +92,7 @@ IO_Handler::IO_Handler(char* in_filename, char* out_filename)
   }
 }
 
-void IO_Handler::get_image(size_t width, size_t height,
+void IO_Handler::get_image_rgb(size_t width, size_t height,
                            std::vector<std::vector<Pixel>>* image)
 {
   std::vector<std::vector<Pixel>> _image(std::vector<std::vector<Pixel>>(
@@ -97,7 +126,7 @@ uint16_t IO_Handler::read_bits(size_t x)
   return result;
 }
 
-void IO_Handler::write_image(const std::vector<std::vector<Pixel>>& image,
+void IO_Handler::write_image_rgb(const std::vector<std::vector<Pixel>>& image,
                              const size_t width, const size_t height)
 {
   for(size_t i = 0; i < width; i++) {
@@ -109,13 +138,13 @@ void IO_Handler::write_image(const std::vector<std::vector<Pixel>>& image,
   }
 }
 
-void IO_Handler::get_header(TGA_header* header)
+void IO_Handler::get_header_tga(TGA_header* header)
 {
   in_stream.read(reinterpret_cast<char*>(header), sizeof(TGA_header));
   bytes_read += sizeof(TGA_header);
 }
 
-void IO_Handler::write_header(const TGA_header& header)
+void IO_Handler::write_header_tga(const TGA_header& header)
 {
   out_stream.write(reinterpret_cast<const char*>(&header), sizeof(TGA_header));
   bytes_wrote += sizeof(TGA_header);

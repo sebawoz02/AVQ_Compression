@@ -63,8 +63,8 @@ int main(int argc, char** argv)
   TGA_header og_header{};
   std::vector<std::vector<Pixel>> og_image;
 
-  original.get_header(&og_header);
-  original.get_image(og_header.width, og_header.height, &og_image);
+  original.get_header_tga(&og_header);
+  original.get_image_rgb(og_header.width, og_header.height, &og_image);
 
   // Compare original with encoded
   // 1. Files size
@@ -110,8 +110,8 @@ int main(int argc, char** argv)
   TGA_header decoded_header{};
   std::vector<std::vector<Pixel>> decoded_image;
 
-  decoded.get_header(&decoded_header);
-  decoded.get_image(decoded_header.width, decoded_header.height,
+  decoded.get_header_tga(&decoded_header);
+  decoded.get_image_rgb(decoded_header.width, decoded_header.height,
                     &decoded_image);
 
   double mse = calculate_mse(og_image, decoded_image);

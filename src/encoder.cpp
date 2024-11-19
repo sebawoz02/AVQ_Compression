@@ -1,31 +1,9 @@
 #include <cmath>
 #include <encoder.hpp>
-#include <io_handler.hpp>
 #include <types/growing_point.hpp>
 
-void Encoder::encode(const std::vector<std::vector<Pixel>>& image, size_t width,
-                     size_t height)
-{
-  std::vector<std::vector<uint8_t>> red(width, std::vector<uint8_t>(height, 0));
-  std::vector<std::vector<uint8_t>> green(width,
-                                          std::vector<uint8_t>(height, 0));
-  std::vector<std::vector<uint8_t>> blue(width,
-                                         std::vector<uint8_t>(height, 0));
 
-  for(size_t i = 0; i < width; i++) {
-    for(size_t j = 0; j < height; j++) {
-      red[i][j] = image[i][j].red;
-      green[i][j] = image[i][j].green;
-      blue[i][j] = image[i][j].blue;
-    }
-  }
-
-  adaptive_vector_quantization(Image(red, width, height));
-  adaptive_vector_quantization(Image(green, width, height));
-  adaptive_vector_quantization(Image(blue, width, height));
-}
-
-void Encoder::adaptive_vector_quantization(Image image)
+void Encoder::encode(Image image)
 {
   // Add pixel [0, 0] to growing points pool
   GP_pool gp_pool;

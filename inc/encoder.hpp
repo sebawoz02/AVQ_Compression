@@ -18,8 +18,7 @@ typedef struct Encoder {
       growing_point_update_heur(gpuh), growing_heur(gh), dict_update_heur(duh),
       deletion_heur(dh), tolerance(t){};
 
-  void encode(const std::vector<std::vector<Pixel>>& image, size_t width,
-              size_t height);
+  void encode(Image image);
 
 private:
   IO_Handler* io_handler;                       ///> Input/Output handler
@@ -31,6 +30,4 @@ private:
   heuristic::dh_t deletion_heur;                ///> Dictionary entry deletion heuristic
 
   double tolerance;                             ///> Information loss toleration
-
-  void adaptive_vector_quantization(Image image);
 } Encoder;
