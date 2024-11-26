@@ -13,7 +13,7 @@ namespace arg_parser {
     args.growing_point_update_heur = heuristic::gpp_update::first_from_left;
     args.growing_heur = heuristic::growing::wave;
     args.dict_update_heur = heuristic::dict_update::one_column_one_row;
-    args.deletion_heur = heuristic::dict_deletion::fifo;
+    args.deletion_heur = heuristic::dict_deletion::deletion;
   }
 
   Args parse(size_t argc, char** argv)

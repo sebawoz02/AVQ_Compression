@@ -1,17 +1,16 @@
 #include <stdexcept> // for std::out_of_range
 #include <types/dictionary.hpp>
 
-struct Dict_entry{
-    Dict_entry(Block* b, Dict_entry* n, Dict_entry* p)
+struct Dict_entry {
+  Dict_entry(Block* b, Dict_entry* n, Dict_entry* p)
     : block(b), usage_count(0), prev(p), next(n){};
-    ~Dict_entry();
+  ~Dict_entry();
 
-    Block* block;
-    size_t usage_count;
-    Dict_entry* prev;
-    Dict_entry* next;
+  Block* block;
+  size_t usage_count;
+  Dict_entry* prev;
+  Dict_entry* next;
 };
-
 
 Dict_entry::~Dict_entry()
 {
@@ -33,6 +32,9 @@ void Dictionary::insert(Block* const block)
     first_entry = new Dict_entry(block, nullptr, nullptr);
     last_entry = first_entry;
     len++;
+    if(deletion_mode == FIFO) {
+      deletion_handler->update(first_entry);
+    }
     return;
   }
   if(len == 1) {
@@ -41,11 +43,18 @@ void Dictionary::insert(Block* const block)
        first_entry->block->width * first_entry->block->height) {
       last_entry = new Dict_entry(block, nullptr, first_entry);
       first_entry->next = last_entry;
+      if(deletion_mode == FIFO) {
+        deletion_handler->update(last_entry);
+      }
+      return;
     } else {
       first_entry = new Dict_entry(block, last_entry, nullptr);
       last_entry->prev = first_entry;
+      if(deletion_mode == FIFO) {
+        deletion_handler->update(first_entry);
+      }
+      return;
     }
-    return;
   }
   len++;
 
@@ -59,6 +68,9 @@ void Dictionary::insert(Block* const block)
     auto* entry = new Dict_entry(block, first_entry, nullptr);
     first_entry->prev = entry;
     first_entry = entry;
+    if(deletion_mode == FIFO) {
+      deletion_handler->update(entry);
+    }
     return;
   }
 
@@ -70,6 +82,9 @@ void Dictionary::insert(Block* const block)
 
   if(prev == last_entry) {
     last_entry = entry;
+  }
+  if(deletion_mode == FIFO) {
+    deletion_handler->update(entry);
   }
 }
 
@@ -170,4 +185,27 @@ void Dictionary::remove(size_t const index)
     entry->next->prev = entry->prev;
   }
   delete entry;
+}
+
+void Dictionary::delete_entry()
+{
+  len--;
+  Dict_entry* entry_to_delete = deletion_handler->get_entry_to_delete();
+  if(entry_to_delete->prev != nullptr) {
+    entry_to_delete->prev->next = entry_to_delete->next;
+  }
+  if(entry_to_delete->next != nullptr) {
+    entry_to_delete->next->prev = entry_to_delete->prev;
+  } else {
+    last_entry = entry_to_delete->prev;
+  }
+  delete entry_to_delete;
+}
+
+void Dictionary::set_deletion_mode(Deletion_Mode mode)
+{
+  deletion_mode = mode;
+  if(mode == FIFO) {
+    deletion_handler = new FIFO_Handler();
+  }
 }

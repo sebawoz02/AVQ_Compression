@@ -6,7 +6,8 @@ set(CMAKE_CXX_COMPILER "g++")
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -O3")
 
 set(SOURCES src/encoder.cpp src/heuristics.cpp src/io_handler.cpp src/decoder.cpp src/arg_parser.cpp
-        src/types/dictionary.cpp src/types/gp_pool.cpp src/types/image.cpp src/types/block.cpp)
+        src/types/dictionary.cpp src/types/gp_pool.cpp src/types/image.cpp src/types/block.cpp
+        src/types/dict_deletion_handler.cpp)
 set(TEST_SOURCES test/src/test_heuristics.cpp test/src/test_dictionary.cpp test/src/test_gp_pool.cpp)
 
 add_executable(avq app/avq/main.cpp ${SOURCES})

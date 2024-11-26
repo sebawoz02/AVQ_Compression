@@ -46,6 +46,7 @@ Image Decoder::adaptive_vector_quantization(size_t width, size_t height)
 
   // Init Dict
   Dictionary* dict = dict_init_heur();
+  dict->set_deletion_mode(FIFO);
 
   while(gpp.size() > 0) {
     GP_pool_entry* gp_p = growing_heur(gpp);
@@ -59,7 +60,7 @@ Image Decoder::adaptive_vector_quantization(size_t width, size_t height)
     anchor_gp(gp_p->gp, b, image);
 
     dict_update_heur(*dict, b, gp_p->gp, image);
-    deletion_heur(*dict);
+    heuristic::dict_deletion::deletion(*dict);
     growing_point_update_heur(image, gpp, gp_p);
   }
 

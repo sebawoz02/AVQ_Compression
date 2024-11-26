@@ -46,15 +46,15 @@ namespace heuristic {
   static double _euclidean(Block* b1, Block* b2)
   {
     double euclidean_distance = 0.0;
-      for(size_t i = 0; i < b1->width; ++i) {
-          for(size_t j = 0; j < b1->height; ++j) {
-              auto diff = static_cast<int16_t>(b1->pixels[i][j] - b2->pixels[i][j]);
-              double square = diff * diff;
-              euclidean_distance += square;
-          }
+    for(size_t i = 0; i < b1->width; ++i) {
+      for(size_t j = 0; j < b1->height; ++j) {
+        auto diff = static_cast<int16_t>(b1->pixels[i][j] - b2->pixels[i][j]);
+        double square = diff * diff;
+        euclidean_distance += square;
       }
+    }
 
-      return euclidean_distance;
+    return euclidean_distance;
   }
 
   static void mark_image(Image& image, size_t width, size_t height, size_t x,
@@ -131,8 +131,8 @@ namespace heuristic {
                   Growing_point* current_gp, size_t* common_block_idx,
                   Block** picked_block)
   {
-    top_left(_mse, MSE_MAX, dict, tolerance, image, current_gp, common_block_idx,
-             picked_block);
+    top_left(_mse, MSE_MAX, dict, tolerance, image, current_gp,
+             common_block_idx, picked_block);
   }
 
   void match::max_se(Dictionary& dict, double tolerance, Image& image,
@@ -143,12 +143,12 @@ namespace heuristic {
              common_block_idx, picked_block);
   }
 
-  void match::euclidean(Dictionary& dict, double tolerance, Image &image,
-                        Growing_point *current_gp, size_t* common_block_idx,
-                        Block **picked_block)
+  void match::euclidean(Dictionary& dict, double tolerance, Image& image,
+                        Growing_point* current_gp, size_t* common_block_idx,
+                        Block** picked_block)
   {
-      top_left(_euclidean, MSE_MAX, dict, tolerance, image, current_gp,
-               common_block_idx, picked_block);
+    top_left(_euclidean, MSE_MAX, dict, tolerance, image, current_gp,
+             common_block_idx, picked_block);
   }
 
   // DICT INIT
@@ -214,7 +214,8 @@ namespace heuristic {
     GP_pool_entry* best = gp_pool.first();
     GP_pool_entry* cur = best->next;
     while(cur != nullptr) {
-      if(abs((int)best->gp->x - (int)best->gp->y) > abs((int)cur->gp->x - (int)cur->gp->y)) {
+      if(abs((int)best->gp->x - (int)best->gp->y) >
+         abs((int)cur->gp->x - (int)cur->gp->y)) {
         best = cur;
       }
       cur = cur->next;
@@ -299,10 +300,10 @@ namespace heuristic {
   }
 
   // DICT DELETION
-  void dict_deletion::fifo(Dictionary& dict)
+  void dict_deletion::deletion(Dictionary& dict)
   {
     while(dict.size() >= DICT_SIZE_LIMIT) {
-      dict.remove(256); //DON'T TOUCH 1x1 blocks
+      dict.delete_entry();
     }
   }
 } // namespace heuristic

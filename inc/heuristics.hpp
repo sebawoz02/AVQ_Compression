@@ -64,6 +64,6 @@ namespace heuristic {
   } // namespace dict_update
 
   namespace dict_deletion {
-    void fifo(Dictionary& dict);
+    void deletion(Dictionary& dict);
   }
 } // namespace heuristic

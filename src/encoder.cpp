@@ -10,6 +10,7 @@ void Encoder::encode(Image image)
   gp_pool.add(new Growing_point(0, 0));
   // Init dictionary
   Dictionary* dict = dict_init_heur();
+  dict->set_deletion_mode(FIFO);
 
   // While growing points pool has more elements
   while(gp_pool.size() > 0) {
@@ -32,7 +33,7 @@ void Encoder::encode(Image image)
     dict_update_heur(*dict, picked_block, gp_p->gp, image);
     delete picked_block;
     // Check if dictionary is full and if so use deletion heuristic
-    deletion_heur(*dict);
+    heuristic::dict_deletion::deletion(*dict);
     // Update growing points pool
     growing_point_update_heur(image, gp_pool, gp_p);
   }
