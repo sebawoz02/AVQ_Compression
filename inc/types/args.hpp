@@ -17,6 +17,6 @@ typedef struct Args {
   heuristic::gpuh_t growing_point_update_heur;  ///< Growing Point Pool update heuristic
   heuristic::gh_t growing_heur;                 ///< Growing heuristic
   heuristic::duh_t dict_update_heur;            ///< Dictionary update heuristic
-  heuristic::dh_t deletion_heur;                ///< Dictionary entry deletion heuristic
+  Deletion_Mode deletion_heur;                  ///< Dictionary entry deletion heuristic
   bool exit;                                    ///< Error code
 } Args;

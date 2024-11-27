@@ -10,7 +10,7 @@
  */
 typedef struct Decoder {
   Decoder(IO_Handler* _io_handler, heuristic::idh_t idh, heuristic::gpuh_t gpuh,
-          heuristic::gh_t gh, heuristic::duh_t duh, heuristic::dh_t dh)
+          heuristic::gh_t gh, heuristic::duh_t duh, Deletion_Mode dh)
     : io_handler(_io_handler), dict_init_heur(idh),
       growing_point_update_heur(gpuh), growing_heur(gh), dict_update_heur(duh),
       deletion_heur(dh){};
@@ -23,7 +23,7 @@ private:
   heuristic::gpuh_t growing_point_update_heur;  ///> Growing Point Pool Update heuristic
   heuristic::gh_t growing_heur;                 ///> Growing heuristic
   heuristic::duh_t dict_update_heur;            ///> Dictionary Update heuristic
-  heuristic::dh_t deletion_heur;                ///> Dictionary entry deletion heuristic
+  Deletion_Mode deletion_heur;                  ///> Dictionary entry deletion heuristic
 
   Image adaptive_vector_quantization(size_t width, size_t height);
 } Decoder;

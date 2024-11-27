@@ -32,7 +32,7 @@ void Dictionary::insert(Block* const block)
     first_entry = new Dict_entry(block, nullptr, nullptr);
     last_entry = first_entry;
     len++;
-    if(deletion_mode == FIFO || deletion_mode == LRU) {
+    if(deletion_mode == DELETION_MODE_FIFO || deletion_mode == DELETION_MODE_LRU) {
       deletion_handler->update(first_entry);
     }
     return;
@@ -43,14 +43,14 @@ void Dictionary::insert(Block* const block)
       first_entry->block->width * first_entry->block->height) {
       last_entry = new Dict_entry(block, nullptr, first_entry);
       first_entry->next = last_entry;
-      if(deletion_mode == FIFO || deletion_mode == LRU) {
+      if(deletion_mode == DELETION_MODE_FIFO || deletion_mode == DELETION_MODE_LRU) {
         deletion_handler->update(last_entry);
       }
       return;
     } else {
       first_entry = new Dict_entry(block, last_entry, nullptr);
       last_entry->prev = first_entry;
-      if(deletion_mode == FIFO || deletion_mode == LRU) {
+      if(deletion_mode == DELETION_MODE_FIFO || deletion_mode == DELETION_MODE_LRU) {
         deletion_handler->update(first_entry);
       }
       return;
@@ -68,7 +68,7 @@ void Dictionary::insert(Block* const block)
     auto* entry = new Dict_entry(block, first_entry, nullptr);
     first_entry->prev = entry;
     first_entry = entry;
-    if(deletion_mode == FIFO || deletion_mode == LRU) {
+    if(deletion_mode == DELETION_MODE_FIFO || deletion_mode == DELETION_MODE_LRU) {
       deletion_handler->update(entry);
     }
     return;
@@ -83,7 +83,7 @@ void Dictionary::insert(Block* const block)
   if(prev == last_entry) {
     last_entry = entry;
   }
-  if(deletion_mode == FIFO || deletion_mode == LRU) {
+  if(deletion_mode == DELETION_MODE_FIFO || deletion_mode == DELETION_MODE_LRU) {
     deletion_handler->update(entry);
   }
 }
@@ -190,10 +190,10 @@ void Dictionary::delete_entry()
 void Dictionary::set_deletion_mode(Deletion_Mode mode)
 {
   deletion_mode = mode;
-  if(mode == FIFO) {
+  if(mode == DELETION_MODE_FIFO) {
     deletion_handler = new FIFO_Handler();
   }
-  else if(mode == LRU) {
+  else if(mode == DELETION_MODE_LRU) {
     deletion_handler = new LRU_Handler();
   }
 }

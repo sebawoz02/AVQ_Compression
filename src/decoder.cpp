@@ -46,7 +46,7 @@ Image Decoder::adaptive_vector_quantization(size_t width, size_t height)
 
   // Init Dict
   Dictionary* dict = dict_init_heur();
-  dict->set_deletion_mode(LRU);
+  dict->set_deletion_mode(deletion_heur);
 
   while(gpp.size() > 0) {
     GP_pool_entry* gp_p = growing_heur(gpp);
@@ -56,9 +56,8 @@ Image Decoder::adaptive_vector_quantization(size_t width, size_t height)
 
     uint16_t block_idx = io_handler->read_bits(bits_to_receive);
     Block* b = (*dict)[block_idx];
-    if(dict->deletion_mode == LRU && block_idx > 255)
-    {
-        dict->deletion_handler->update(dict->get_entry_at(block_idx));
+    if(dict->deletion_mode == DELETION_MODE_LRU && block_idx > 255) {
+      dict->deletion_handler->update(dict->get_entry_at(block_idx));
     }
     // Anchor b to the current gp, in order to reconstruct the output image
     anchor_gp(gp_p->gp, b, image);

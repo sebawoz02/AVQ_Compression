@@ -106,8 +106,8 @@ namespace heuristic {
         // The largest block that fits in tolerance
         *common_block_idx = i;
         *picked_block = gp_block;
-        if(dict.deletion_mode == LRU) {
-            dict.deletion_handler->update(dict.get_entry_at(i));
+        if(dict.deletion_mode == DELETION_MODE_LRU) {
+          dict.deletion_handler->update(dict.get_entry_at(i));
         }
         mark_image(image, gp_block->width, gp_block->height, current_gp->x,
                    current_gp->y);
@@ -131,24 +131,24 @@ namespace heuristic {
                   Growing_point* current_gp, size_t* common_block_idx,
                   Block** picked_block)
   {
-    top_left(_mse, dict, tolerance, image, current_gp,
-             common_block_idx, picked_block);
+    top_left(_mse, dict, tolerance, image, current_gp, common_block_idx,
+             picked_block);
   }
 
   void match::max_se(Dictionary& dict, double tolerance, Image& image,
                      Growing_point* current_gp, size_t* common_block_idx,
                      Block** picked_block)
   {
-    top_left(_max_se, dict, tolerance, image, current_gp,
-             common_block_idx, picked_block);
+    top_left(_max_se, dict, tolerance, image, current_gp, common_block_idx,
+             picked_block);
   }
 
   void match::euclidean(Dictionary& dict, double tolerance, Image& image,
                         Growing_point* current_gp, size_t* common_block_idx,
                         Block** picked_block)
   {
-    top_left(_euclidean, dict, tolerance, image, current_gp,
-             common_block_idx, picked_block);
+    top_left(_euclidean, dict, tolerance, image, current_gp, common_block_idx,
+             picked_block);
   }
 
   // DICT INIT

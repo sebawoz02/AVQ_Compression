@@ -11,7 +11,7 @@
  * @brief Dictionary structure with all blocks used to match with Growing Points.
  */
 typedef struct Dictionary {
-  Dictionary(): deletion_mode(NONE), deletion_handler(nullptr), len(0), first_entry(nullptr), last_entry(nullptr){};
+  Dictionary(): deletion_mode(DELETION_MODE_NONE), deletion_handler(nullptr), len(0), first_entry(nullptr), last_entry(nullptr){};
   ~Dictionary();
 
   void insert(Block* block);

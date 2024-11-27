@@ -6,9 +6,9 @@
 
 typedef enum Deletion_Mode
 {
-    NONE,
-    FIFO,
-    LRU,
+    DELETION_MODE_NONE,
+    DELETION_MODE_FIFO,
+    DELETION_MODE_LRU,
 } Deletion_Mode;
 
 typedef struct Deletion_Handler {

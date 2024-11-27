@@ -13,7 +13,7 @@ namespace arg_parser {
     args.growing_point_update_heur = heuristic::gpp_update::first_from_left;
     args.growing_heur = heuristic::growing::wave;
     args.dict_update_heur = heuristic::dict_update::one_column_one_row;
-    args.deletion_heur = heuristic::dict_deletion::deletion;
+    args.deletion_heur = DELETION_MODE_FIFO;
   }
 
   Args parse(size_t argc, char** argv)
@@ -40,7 +40,8 @@ namespace arg_parser {
                    "compression\n";
       std::cout << "-mh <value>    Match heuristic:\n"
                    "               0 - Maximum Square Error (default)\n"
-                   "               1 - Mean Square Error\n";
+                   "               1 - Mean Square Error\n"
+                   "               2 - Euclidean distance";
       std::cout << "-gh <value>    Growing heuristic:\n"
                    "               0 - Wave (default)\n"
                    "               1 - Diagonal\n"
@@ -49,6 +50,9 @@ namespace arg_parser {
                    "               0 - One Column One Row (default)\n"
                    "               1 - One Row\n"
                    "               2 - One Column\n";
+      std::cout << "-dh <value>    Dictionary deletion heuristic:\n"
+                   "               0 - DELETION_MODE_FIFO (default)\n"
+                   "               1 - DELETION_MODE_LRU\n";
       return args;
     }
 
@@ -150,6 +154,25 @@ namespace arg_parser {
         }
         if(m == 1) {
           args.match_heur = heuristic::match::mse;
+        } else if(m == 2) {
+          args.match_heur = heuristic::match::euclidean;
+        }
+        i++;
+      } else if(arg == "-dh") {
+        int m;
+        try {
+          m = std::stoi(argv[i + 1]);
+        } catch(const std::invalid_argument& e) {
+          std::cerr << "Error: Invalid number format for deletion heuristic."
+                    << std::endl;
+          return args;
+        } catch(const std::out_of_range& e) {
+          std::cerr << "Error: Deletion heuristic value out of range."
+                    << std::endl;
+          return args;
+        }
+        if(m == 1) {
+          args.deletion_heur = DELETION_MODE_LRU;
         }
         i++;
       } else {

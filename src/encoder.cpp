@@ -2,7 +2,6 @@
 #include <encoder.hpp>
 #include <types/growing_point.hpp>
 
-
 void Encoder::encode(Image image)
 {
   // Add pixel [0, 0] to growing points pool
@@ -10,7 +9,7 @@ void Encoder::encode(Image image)
   gp_pool.add(new Growing_point(0, 0));
   // Init dictionary
   Dictionary* dict = dict_init_heur();
-  dict->set_deletion_mode(LRU);
+  dict->set_deletion_mode(deletion_heur);
 
   // While growing points pool has more elements
   while(gp_pool.size() > 0) {
@@ -19,7 +18,8 @@ void Encoder::encode(Image image)
 
     size_t common_block_idx;
     Block* picked_block;
-    match_heur(*dict, tolerance, image, gp_p->gp, &common_block_idx, &picked_block);
+    match_heur(*dict, tolerance, image, gp_p->gp, &common_block_idx,
+               &picked_block);
 
     auto bits_to_transmit =
       static_cast<int8_t>(std::ceil(log2(static_cast<double>(dict->size()))));
