@@ -35,13 +35,13 @@ namespace arg_parser {
       std::cout << "-d             Decode mode\n";
       std::cout
         << "-ac            Additional adaptive arithmetic compression\n";
-      std::cout << "-t <value>     Match tolerance [0.0, 1.0] - default: 0.0\n"
+      std::cout << "-t <value>     Match tolerance (geq 0.0) - default: 0.0\n"
                    "               0 - no tolerance for information loss in "
                    "compression\n";
       std::cout << "-mh <value>    Match heuristic:\n"
                    "               0 - Maximum Square Error (default)\n"
                    "               1 - Mean Square Error\n"
-                   "               2 - Euclidean distance";
+                   "               2 - Euclidean distance\n";
       std::cout << "-gh <value>    Growing heuristic:\n"
                    "               0 - Wave (default)\n"
                    "               1 - Diagonal\n"
@@ -94,8 +94,8 @@ namespace arg_parser {
           std::cerr << "Error: Tolerance value out of range." << std::endl;
           return args;
         }
-        if(tolerance < 0.0 || tolerance > 1.0) {
-          std::cerr << "Tolerance needs to be value in range [0,1]"
+        if(tolerance < 0.0) {
+          std::cerr << "Tolerance needs to be value bigger then 0."
                     << std::endl;
           return args;
         }
