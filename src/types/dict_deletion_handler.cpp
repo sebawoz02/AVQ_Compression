@@ -39,3 +39,22 @@ FIFO_Handler::~FIFO_Handler()
   }
   delete ptr;
 }
+
+void LRU_Handler::update(Dict_entry* entry) {
+    auto it = cache.find(entry);
+    if(it != cache.end())
+    {
+        items.splice(items.begin(), items, it->second);
+        return;
+    }
+
+    items.push_front(entry);
+    cache[entry] = items.begin();
+}
+
+Dict_entry* LRU_Handler::get_entry_to_delete() {
+    Dict_entry* lru = items.back();
+    cache.erase(lru);
+    items.pop_back();
+    return lru;
+}

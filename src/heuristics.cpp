@@ -1,8 +1,6 @@
 #include <cmath>
 #include <heuristics.hpp>
 
-#define MSE_MAX 65025
-
 namespace heuristic {
 
   static double _mse(Block* b1, Block* b2);
@@ -69,8 +67,7 @@ namespace heuristic {
     }
   }
 
-  static void top_left(double(match_func)(Block*, Block*),
-                       double max_match_error, Dictionary& dict,
+  static void top_left(double(match_func)(Block*, Block*), Dictionary& dict,
                        double tolerance, Image& image,
                        Growing_point* current_gp, size_t* common_block_idx,
                        Block** picked_block)
@@ -105,10 +102,13 @@ namespace heuristic {
                             ? (0.4 * tolerance)
                             : ((A <= 0.1) ? 0.6 * tolerance : tolerance);
 
-      if(match / max_match_error <= _tolerance) {
+      if(match <= _tolerance) {
         // The largest block that fits in tolerance
         *common_block_idx = i;
         *picked_block = gp_block;
+        if(dict.deletion_mode == LRU) {
+            dict.deletion_handler->update(dict.get_entry_at(i));
+        }
         mark_image(image, gp_block->width, gp_block->height, current_gp->x,
                    current_gp->y);
         return;
@@ -131,7 +131,7 @@ namespace heuristic {
                   Growing_point* current_gp, size_t* common_block_idx,
                   Block** picked_block)
   {
-    top_left(_mse, MSE_MAX, dict, tolerance, image, current_gp,
+    top_left(_mse, dict, tolerance, image, current_gp,
              common_block_idx, picked_block);
   }
 
@@ -139,7 +139,7 @@ namespace heuristic {
                      Growing_point* current_gp, size_t* common_block_idx,
                      Block** picked_block)
   {
-    top_left(_max_se, MSE_MAX, dict, tolerance, image, current_gp,
+    top_left(_max_se, dict, tolerance, image, current_gp,
              common_block_idx, picked_block);
   }
 
@@ -147,7 +147,7 @@ namespace heuristic {
                         Growing_point* current_gp, size_t* common_block_idx,
                         Block** picked_block)
   {
-    top_left(_euclidean, MSE_MAX, dict, tolerance, image, current_gp,
+    top_left(_euclidean, dict, tolerance, image, current_gp,
              common_block_idx, picked_block);
   }
 

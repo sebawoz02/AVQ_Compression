@@ -3,11 +3,10 @@
 
 struct Dict_entry {
   Dict_entry(Block* b, Dict_entry* n, Dict_entry* p)
-    : block(b), usage_count(0), prev(p), next(n){};
+    : block(b), prev(p), next(n){};
   ~Dict_entry();
 
   Block* block;
-  size_t usage_count;
   Dict_entry* prev;
   Dict_entry* next;
 };
@@ -24,6 +23,7 @@ Dictionary::~Dictionary()
     last_entry = entry->prev;
     delete entry;
   }
+  delete deletion_handler;
 }
 
 void Dictionary::insert(Block* const block)
@@ -32,7 +32,7 @@ void Dictionary::insert(Block* const block)
     first_entry = new Dict_entry(block, nullptr, nullptr);
     last_entry = first_entry;
     len++;
-    if(deletion_mode == FIFO) {
+    if(deletion_mode == FIFO || deletion_mode == LRU) {
       deletion_handler->update(first_entry);
     }
     return;
@@ -40,17 +40,17 @@ void Dictionary::insert(Block* const block)
   if(len == 1) {
     len++;
     if(block->width * block->height >=
-       first_entry->block->width * first_entry->block->height) {
+      first_entry->block->width * first_entry->block->height) {
       last_entry = new Dict_entry(block, nullptr, first_entry);
       first_entry->next = last_entry;
-      if(deletion_mode == FIFO) {
+      if(deletion_mode == FIFO || deletion_mode == LRU) {
         deletion_handler->update(last_entry);
       }
       return;
     } else {
       first_entry = new Dict_entry(block, last_entry, nullptr);
       last_entry->prev = first_entry;
-      if(deletion_mode == FIFO) {
+      if(deletion_mode == FIFO || deletion_mode == LRU) {
         deletion_handler->update(first_entry);
       }
       return;
@@ -68,7 +68,7 @@ void Dictionary::insert(Block* const block)
     auto* entry = new Dict_entry(block, first_entry, nullptr);
     first_entry->prev = entry;
     first_entry = entry;
-    if(deletion_mode == FIFO) {
+    if(deletion_mode == FIFO || deletion_mode == LRU) {
       deletion_handler->update(entry);
     }
     return;
@@ -83,7 +83,7 @@ void Dictionary::insert(Block* const block)
   if(prev == last_entry) {
     last_entry = entry;
   }
-  if(deletion_mode == FIFO) {
+  if(deletion_mode == FIFO || deletion_mode == LRU) {
     deletion_handler->update(entry);
   }
 }
@@ -129,11 +129,6 @@ Block* Dictionary::operator[](size_t const index) const
   return get_entry_at(index)->block;
 }
 
-[[maybe_unused]] size_t Dictionary::get_count(size_t const index) const
-{
-  return get_entry_at(index)->usage_count;
-}
-
 Dict_entry* Dictionary::get_entry_at(size_t const index) const
 {
   if(index >= len) {
@@ -155,16 +150,6 @@ Dict_entry* Dictionary::get_entry_at(size_t const index) const
   }
 }
 
-[[maybe_unused]] void Dictionary::inc_usage_count(Block* block)
-{
-  Dict_entry* ent = first_entry;
-  while(ent != nullptr && ent->block != block) {
-    ent = ent->next;
-  }
-  if(ent != nullptr) {
-    ent->usage_count++;
-  }
-}
 
 void Dictionary::remove(size_t const index)
 {
@@ -207,5 +192,8 @@ void Dictionary::set_deletion_mode(Deletion_Mode mode)
   deletion_mode = mode;
   if(mode == FIFO) {
     deletion_handler = new FIFO_Handler();
+  }
+  else if(mode == LRU) {
+    deletion_handler = new LRU_Handler();
   }
 }

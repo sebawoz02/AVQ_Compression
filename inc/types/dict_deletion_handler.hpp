@@ -1,6 +1,15 @@
 #pragma once
 
 #include <types/dict_entry.hpp>
+#include <list>
+#include <unordered_map>
+
+typedef enum Deletion_Mode
+{
+    NONE,
+    FIFO,
+    LRU,
+} Deletion_Mode;
 
 typedef struct Deletion_Handler {
   virtual void update(Dict_entry* entry) = 0;
@@ -15,7 +24,16 @@ struct FIFO_Handler: public Deletion_Handler {
   Dict_entry* get_entry_to_delete() override;
   ~FIFO_Handler() override;
 
+private:
   FIFO_entry* head;
   FIFO_entry* tail;
   int size = 0;
+};
+
+struct LRU_Handler: public Deletion_Handler {
+    void update(Dict_entry* entry) override;
+    Dict_entry* get_entry_to_delete() override;
+private:
+    std::list<Dict_entry*> items;
+    std::unordered_map<Dict_entry*, std::list<Dict_entry*>::iterator> cache;
 };

@@ -6,13 +6,6 @@
 
 #define DICT_SIZE_LIMIT 512
 
-typedef enum Deletion_Mode
-{
-    NONE,
-    FIFO,
-    LRU,
-} Deletion_Mode;
-
 /**
  * @struct Dictionary
  * @brief Dictionary structure with all blocks used to match with Growing Points.
@@ -27,9 +20,7 @@ typedef struct Dictionary {
   void set_deletion_mode(Deletion_Mode mode);
   void delete_entry();
   [[nodiscard]] size_t size() const;
-
-  [[maybe_unused]] [[nodiscard]] size_t get_count(size_t index) const;
-  [[maybe_unused]] void inc_usage_count(Block* block);
+  [[nodiscard]] Dict_entry* get_entry_at(size_t index) const;
 
   Block* operator[](size_t index) const;
 
@@ -39,7 +30,4 @@ private:
   uint16_t len;             ///< Dictionaries length
   Dict_entry* first_entry;  ///< First entry - head
   Dict_entry* last_entry;   ///< Last entry - tail
-
-
-  [[nodiscard]] Dict_entry* get_entry_at(size_t index) const;
 } Dictionary;

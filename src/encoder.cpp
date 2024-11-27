@@ -10,7 +10,7 @@ void Encoder::encode(Image image)
   gp_pool.add(new Growing_point(0, 0));
   // Init dictionary
   Dictionary* dict = dict_init_heur();
-  dict->set_deletion_mode(FIFO);
+  dict->set_deletion_mode(LRU);
 
   // While growing points pool has more elements
   while(gp_pool.size() > 0) {
