@@ -1,13 +1,5 @@
 #include <types/gp_pool.hpp>
 
-typedef struct GP_pool_entry {
-    explicit GP_pool_entry(Growing_point* _gp): next(nullptr), gp(_gp){};
-    ~GP_pool_entry();
-
-    GP_pool_entry* next;
-    Growing_point* gp;
-} GP_pool_entry;
-
 GP_pool::~GP_pool()
 {
   GP_pool_entry* ptr = head;
@@ -48,17 +40,13 @@ void GP_pool::add(Growing_point* new_gp)
 {
   if(head == nullptr) {
     head = new GP_pool_entry(new_gp);
+    tail = head;
     _size++;
     return;
   }
-
-  GP_pool_entry* ptr = head;
-  while(ptr->next != nullptr) {
-    ptr = ptr->next;
-  }
-
   auto* gpp_new = new GP_pool_entry(new_gp);
-  ptr->next = gpp_new;
+  tail->next = gpp_new;
+  tail = gpp_new;
   _size++;
 }
 
@@ -66,6 +54,9 @@ void GP_pool::remove(Growing_point* gp_old)
 {
   if(head->gp == gp_old) {
     GP_pool_entry* to_delete = head;
+    if(tail == head) {
+      tail = nullptr;
+    }
     head = head->next;
     delete to_delete;
     _size--;
@@ -79,6 +70,9 @@ void GP_pool::remove(Growing_point* gp_old)
     ptr = ptr->next;
   }
   if(ptr->gp == gp_old) {
+    if(ptr == tail) {
+      tail = prev;
+    }
     prev->next = ptr->next;
     delete ptr;
     _size--;
@@ -87,14 +81,12 @@ void GP_pool::remove(Growing_point* gp_old)
 
 Growing_point* GP_pool::last()
 {
-  if(head == nullptr)
-    return nullptr;
-  GP_pool_entry* ptr = head;
-  while(ptr->next != nullptr) {
-    ptr = ptr->next;
-  }
+  return tail->gp;
+}
 
-  return ptr->gp;
+GP_pool_entry* GP_pool::first()
+{
+  return head;
 }
 
 GP_pool_entry::~GP_pool_entry()
@@ -110,12 +102,18 @@ void GP_pool::remove_obsolete(Image& image)
     if(image.encoded[cur->gp->x][cur->gp->y]) {
       GP_pool_entry* to_rm;
       if(prev == nullptr) {
+        if(head == tail) {
+          tail = nullptr;
+        }
         head = cur->next;
         to_rm = cur;
         cur = head;
       } else {
         to_rm = cur;
         prev->next = cur->next;
+        if(cur == tail) {
+          tail = prev;
+        }
         cur = cur->next;
       }
       delete to_rm;

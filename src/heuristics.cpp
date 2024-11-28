@@ -167,7 +167,7 @@ namespace heuristic {
 
   // GP UPDATE
   void gpp_update::first_from_left(Image& image, GP_pool* growing_points,
-                                  Growing_point* cur_gp)
+                                   Growing_point* cur_gp)
   {
     growing_points->remove(cur_gp);
     growing_points->remove_obsolete(image);
@@ -197,12 +197,15 @@ namespace heuristic {
   // GROWING
   Growing_point* growing::wave(GP_pool* gp_pool)
   {
-    Growing_point* best = (*gp_pool)[0];
-    for(size_t i = 1; (*gp_pool)[i] != nullptr; i++) {
-      Growing_point* cur = (*gp_pool)[i];
+    GP_pool_entry* ptr = gp_pool->first();
+    Growing_point* best = ptr->gp;
+    ptr = ptr->next;
+    while(ptr != nullptr) {
+      Growing_point* cur = ptr->gp;
       if(best->x + best->y > cur->x + cur->y) {
         best = cur;
       }
+      ptr = ptr->next;
     }
 
     return best;
@@ -210,15 +213,16 @@ namespace heuristic {
 
   Growing_point* growing::diagonal(GP_pool* gp_pool)
   {
-      Growing_point* best = (*gp_pool)[0];
-      uint8_t gpp_size = gp_pool->size();
-      for(uint8_t i = 1; i < gpp_size; i++) {
-      Growing_point* cur = (*gp_pool)[i];
+    GP_pool_entry* ptr = gp_pool->first();
+    Growing_point* best = ptr->gp;
+    ptr = ptr->next;
+    while(ptr != nullptr) {
+      Growing_point* cur = ptr->gp;
       if(abs((int)best->x - (int)best->y) > abs((int)cur->x - (int)cur->y)) {
         best = cur;
       }
+      ptr = ptr->next;
     }
-
     return best;
   }
 
@@ -299,9 +303,10 @@ namespace heuristic {
 
   // DICT DELETION
 
-  void dict_deletion::deletion(Dictionary& dict) {
-      while (dict.size() >= DICT_SIZE_LIMIT) {
-          dict.delete_entry();
-      }
+  void dict_deletion::deletion(Dictionary& dict)
+  {
+    while(dict.size() >= DICT_SIZE_LIMIT) {
+      dict.delete_entry();
+    }
   }
 } // namespace heuristic
