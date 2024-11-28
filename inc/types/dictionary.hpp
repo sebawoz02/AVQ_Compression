@@ -27,7 +27,7 @@ typedef struct Dictionary {
   Deletion_Mode deletion_mode;
   Deletion_Handler* deletion_handler;
 private:
-  uint16_t len;             ///< Dictionaries length
+  size_t len;               ///< Dictionaries length
   Dict_entry* first_entry;  ///< First entry - head
   Dict_entry* last_entry;   ///< Last entry - tail
 } Dictionary;

@@ -1,12 +1,10 @@
 #include <types/gp_pool.hpp>
 
-
 typedef struct GP_pool_entry {
-    explicit GP_pool_entry(Growing_point* _gp, GP_pool_entry* _prev): next(nullptr), prev(_prev), gp(_gp){};
+    explicit GP_pool_entry(Growing_point* _gp): next(nullptr), gp(_gp){};
     ~GP_pool_entry();
 
     GP_pool_entry* next;
-    GP_pool_entry* prev;
     Growing_point* gp;
 } GP_pool_entry;
 
@@ -24,7 +22,6 @@ Growing_point* GP_pool::operator[](size_t index) const
 {
   size_t counter = 0;
   GP_pool_entry* ptr = head;
-
   while(counter != index && ptr != nullptr) {
     ptr = ptr->next;
     counter++;
@@ -50,30 +47,24 @@ bool GP_pool::contains(size_t x, size_t y) const
 void GP_pool::add(Growing_point* new_gp)
 {
   if(head == nullptr) {
-    head = new GP_pool_entry(new_gp, nullptr);
-    tail = head;
+    head = new GP_pool_entry(new_gp);
     _size++;
     return;
   }
 
-  auto* gpp_new = new GP_pool_entry(new_gp, tail);
-  tail->next = gpp_new;
-  tail = gpp_new;
+  GP_pool_entry* ptr = head;
+  while(ptr->next != nullptr) {
+    ptr = ptr->next;
+  }
+
+  auto* gpp_new = new GP_pool_entry(new_gp);
+  ptr->next = gpp_new;
   _size++;
 }
 
 void GP_pool::remove(Growing_point* gp_old)
 {
-  if(head == nullptr)
-  {
-      return;
-  }
-
   if(head->gp == gp_old) {
-    if(head == tail)
-    {
-         tail = nullptr;
-    }
     GP_pool_entry* to_delete = head;
     head = head->next;
     delete to_delete;
@@ -81,65 +72,56 @@ void GP_pool::remove(Growing_point* gp_old)
     return;
   }
 
-  GP_pool_entry* ptr = head->next;
-  while(ptr != nullptr && ptr->gp != gp_old) {
+  GP_pool_entry* prev = head;
+  GP_pool_entry* ptr = prev->next;
+  while(ptr->next != nullptr && ptr->gp != gp_old) {
+    prev = ptr;
     ptr = ptr->next;
   }
-
-  if(ptr == nullptr)
-  {
-      return;
+  if(ptr->gp == gp_old) {
+    prev->next = ptr->next;
+    delete ptr;
+    _size--;
   }
-
-  if(ptr == tail)
-  {
-    tail = ptr->prev;
-  }
-  delete ptr;
-  _size--;
 }
 
 Growing_point* GP_pool::last()
 {
-  if(tail == nullptr)
-  {
-      return nullptr;
+  if(head == nullptr)
+    return nullptr;
+  GP_pool_entry* ptr = head;
+  while(ptr->next != nullptr) {
+    ptr = ptr->next;
   }
-  return tail->gp;
+
+  return ptr->gp;
 }
 
 GP_pool_entry::~GP_pool_entry()
 {
-  if(next != nullptr)
-  {
-      next->prev = prev;
-  }
-  if(prev != nullptr)
-  {
-      prev->next = next;
-  }
   delete gp;
 }
 
 void GP_pool::remove_obsolete(Image& image)
 {
   GP_pool_entry* cur = head;
+  GP_pool_entry* prev = nullptr;
   while(cur != nullptr) {
     if(image.encoded[cur->gp->x][cur->gp->y]) {
-      GP_pool_entry* to_rm = cur;
-      if(cur == head) {
+      GP_pool_entry* to_rm;
+      if(prev == nullptr) {
         head = cur->next;
+        to_rm = cur;
         cur = head;
-      } else if(cur == tail) {
-        tail = cur->prev;
-        cur = nullptr;
-      } else
-      {
-          cur = cur->next;
+      } else {
+        to_rm = cur;
+        prev->next = cur->next;
+        cur = cur->next;
       }
       delete to_rm;
       _size--;
     } else {
+      prev = cur;
       cur = cur->next;
     }
   }

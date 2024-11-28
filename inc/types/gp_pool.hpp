@@ -1,6 +1,6 @@
 #pragma once
 
-#include <types/dictionary.hpp>
+#include <cstddef>
 #include <types/growing_point.hpp>
 #include <types/image.hpp>
 
@@ -18,7 +18,7 @@ struct GP_pool_entry;
  */
 typedef struct GP_pool {
   ~GP_pool();
-  GP_pool(): head(nullptr), tail(nullptr), _size(0){};
+  GP_pool(): head(nullptr), _size(0){};
 
   Growing_point* operator[](size_t index) const;
   [[nodiscard]] bool contains(size_t x, size_t y) const;
@@ -32,6 +32,5 @@ typedef struct GP_pool {
 
 private:
   GP_pool_entry* head;  ///< First entry
-  GP_pool_entry* tail;  ///< Last entry
-  uint8_t _size;        ///< Growing Points Pool length/size
+  size_t _size;         ///< Growing Points Pool length/size
 } GP_pool;
