@@ -74,7 +74,7 @@ int main(int argc, char** argv)
   auto* encoded_freq_dict =
     static_cast<uint32_t*>(calloc(NO_POSSIBLE_SYMBOLS, sizeof(uint32_t)));
   uint64_t og_filesize = original.get_bytes_read();
-  uint64_t encoded_filesize;
+  uint64_t encoded_filesize = 0;
 
   get_freq_table_for_original(reinterpret_cast<char*>(&og_header),
                               og_header.width, og_header.height, og_image,
@@ -84,7 +84,7 @@ int main(int argc, char** argv)
   long double og_entropy = calculate_entropy(og_freq_dict, og_filesize);
   long double encoded_entropy =
     calculate_entropy(encoded_freq_dict, encoded_filesize);
-  long double ent_increase = encoded_entropy / og_entropy * 100.0 - 100.0;
+  auto ent_increase = static_cast<double>(encoded_entropy * 100.0 / og_entropy - 100.0);
   long double size_increase =
     static_cast<long double>(encoded_filesize) / og_filesize * 100.0 - 100.0;
 

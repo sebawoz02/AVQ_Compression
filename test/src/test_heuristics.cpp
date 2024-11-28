@@ -108,7 +108,7 @@ static void test_match()
     size_t common_block_idx;
     Block* best_block;
 
-    heuristic::match::mse(dict, tolerance, image, gp,
+    heuristic::match::mse(*dict, tolerance, image, gp,
                           &common_block_idx, &best_block);
 
     assert(common_block_idx == 258);
@@ -216,7 +216,7 @@ static void test_match()
     size_t common_block_idx;
     Block* best_block;
 
-    heuristic::match::mse(dict, tolerance, image, gp,
+    heuristic::match::mse(*dict, tolerance, image, gp,
                           &common_block_idx, &best_block);
 
     assert(common_block_idx == 255);
