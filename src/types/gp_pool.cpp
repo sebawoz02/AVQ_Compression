@@ -2,6 +2,15 @@
 #include <stdexcept>
 
 
+typedef struct GP_pool_entry {
+  explicit GP_pool_entry(Growing_point* _gp, GP_pool_entry* _prev): next(nullptr), prev(_prev), gp(_gp){};
+  ~GP_pool_entry();
+
+  GP_pool_entry* next;
+  GP_pool_entry* prev;
+  Growing_point* gp;
+} GP_pool_entry;
+
 GP_pool::~GP_pool()
 {
   GP_pool_entry* ptr = head;
@@ -12,7 +21,7 @@ GP_pool::~GP_pool()
   }
 }
 
-GP_pool_entry* GP_pool::operator[](uint8_t index) const
+Growing_point* GP_pool::operator[](uint8_t index) const
 {
   if(index >= _size)
   {
@@ -31,7 +40,8 @@ GP_pool_entry* GP_pool::operator[](uint8_t index) const
       entry = entry->next;
     }
   }
-  return entry;
+  return entry->gp;
+
 }
 
 bool GP_pool::contains(size_t x, size_t y) const
@@ -61,9 +71,50 @@ void GP_pool::add(Growing_point* new_gp)
   _size++;
 }
 
-GP_pool_entry* GP_pool::last()
+void GP_pool::remove(Growing_point* gp_old)
 {
-  return tail;
+  if(head == nullptr)
+  {
+    return;
+  }
+
+  if(head->gp == gp_old) {
+    if(head == tail)
+    {
+         tail = nullptr;
+    }
+    GP_pool_entry* to_delete = head;
+    head = head->next;
+    delete to_delete;
+    _size--;
+    return;
+  }
+
+  GP_pool_entry* ptr = head->next;
+  while(ptr != nullptr && ptr->gp != gp_old) {
+    ptr = ptr->next;
+  }
+
+  if(ptr == nullptr)
+  {
+    return;
+  }
+
+  if(ptr == tail)
+  {
+    tail = ptr->prev;
+  }
+  delete ptr;
+  _size--;
+}
+
+Growing_point* GP_pool::last()
+{
+  if(tail == nullptr)
+  {
+      return nullptr;
+  }
+  return tail->gp;
 }
 
 GP_pool_entry::~GP_pool_entry()
@@ -106,16 +157,4 @@ void GP_pool::remove_obsolete(Image& image)
 uint8_t GP_pool::size() const
 {
   return _size;
-}
-
-void GP_pool::remove(GP_pool_entry* entry) {
-    if(entry == head)
-    {
-        head = entry->next;
-    }else if(entry == tail)
-    {
-        tail = entry->prev;
-    }
-    delete entry;
-    _size--;
 }

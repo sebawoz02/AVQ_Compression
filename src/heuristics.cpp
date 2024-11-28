@@ -166,42 +166,42 @@ namespace heuristic {
   }
 
   // GP UPDATE
-  void gpp_update::first_from_left(Image& image, GP_pool& growing_points,
-                                   GP_pool_entry* cur_gp)
+  void gpp_update::first_from_left(Image& image, GP_pool* growing_points,
+                                  Growing_point* cur_gp)
   {
-    growing_points.remove(cur_gp);
-    growing_points.remove_obsolete(image);
+    growing_points->remove(cur_gp);
+    growing_points->remove_obsolete(image);
 
     // LIMIT GPP SIZE TO 48 to speed up this process
-    if(growing_points.size() > GPP_SIZE_LIMIT) {
+    if(growing_points->size() > GPP_SIZE_LIMIT) {
       return;
     }
 
     size_t y = 0;
     while(y < image.height) {
-      if(!image.encoded[0][y] && !growing_points.contains(0, y)) {
-        growing_points.add(new Growing_point(0, y));
+      if(!image.encoded[0][y] && !growing_points->contains(0, y)) {
+        growing_points->add(new Growing_point(0, y));
         return;
       }
       size_t x = 1;
       while(x < image.width && image.encoded[x][y]) {
         x++;
       }
-      if(x != image.width && !growing_points.contains(x, y)) {
-        growing_points.add(new Growing_point(x, y));
+      if(x != image.width && !growing_points->contains(x, y)) {
+        growing_points->add(new Growing_point(x, y));
       }
       y++;
     }
   }
 
   // GROWING
-  GP_pool_entry* growing::wave(GP_pool& gp_pool)
+  Growing_point* growing::wave(GP_pool* gp_pool)
   {
-    GP_pool_entry* best = gp_pool[0];
-    uint8_t gpp_size = gp_pool.size();
+    Growing_point* best = (*gp_pool)[0];
+    uint8_t gpp_size = gp_pool->size();
     for(uint8_t i = 1; i < gpp_size; i++) {
-      GP_pool_entry* cur = gp_pool[i];
-      if(best->gp->x + best->gp->y > cur->gp->x + cur->gp->y) {
+      Growing_point* cur = (*gp_pool)[i];
+      if(best->x + best->y > cur->x + cur->y) {
         best = cur;
       }
     }
@@ -209,28 +209,28 @@ namespace heuristic {
     return best;
   }
 
-    GP_pool_entry* growing::diagonal(GP_pool& gp_pool)
+  Growing_point* growing::diagonal(GP_pool* gp_pool)
   {
 
-      GP_pool_entry* best = gp_pool[0];
-      uint8_t gpp_size = gp_pool.size();
+      Growing_point* best = (*gp_pool)[0];
+      uint8_t gpp_size = gp_pool->size();
       for(uint8_t i = 1; i < gpp_size; i++) {
-        GP_pool_entry* cur = gp_pool[i];
-        if(abs((int)best->gp->x - (int)best->gp->y) > abs((int)cur->gp->x - (int)cur->gp->y)) {
-          best = cur;
+      Growing_point* cur = (*gp_pool)[i];
+      if(abs((int)best->x - (int)best->y) > abs((int)cur->x - (int)cur->y)) {
+        best = cur;
       }
     }
 
     return best;
   }
 
-  GP_pool_entry* growing::lifo(GP_pool& gp_pool)
+  Growing_point* growing::lifo(GP_pool* gp_pool)
   {
-    return gp_pool.last();
+    return gp_pool->last();
   }
 
   // DICT UPDATE
-  void dict_update::one_row(Dictionary& dict, Block* picked_block,
+  void dict_update::one_row(Dictionary* dict, Block* picked_block,
                             Growing_point* gp, Image& image)
   {
     if(gp->y == 0) {
@@ -240,7 +240,7 @@ namespace heuristic {
 
       auto* b = new Block(picked_block->width, picked_block->height,
                           picked_block->pixels);
-      dict.insert(b);
+      dict->insert(b);
       return;
     }
 
@@ -259,10 +259,10 @@ namespace heuristic {
       }
     }
     auto* b = new Block(w, h, pixels);
-    dict.insert(b);
+    dict->insert(b);
   }
 
-  void dict_update::one_column(Dictionary& dict, Block* picked_block,
+  void dict_update::one_column(Dictionary* dict, Block* picked_block,
                                Growing_point* gp, Image& image)
   {
     if(gp->x == 0) {
@@ -271,7 +271,7 @@ namespace heuristic {
       }
       auto* b = new Block(picked_block->width, picked_block->height,
                           picked_block->pixels);
-      dict.insert(b);
+      dict->insert(b);
       return;
     }
     size_t w = picked_block->width + 1;
@@ -289,10 +289,10 @@ namespace heuristic {
       }
     }
     auto* b = new Block(w, h, pixels);
-    dict.insert(b);
+    dict->insert(b);
   }
 
-  void dict_update::one_column_one_row(Dictionary& dict, Block* picked_block,
+  void dict_update::one_column_one_row(Dictionary* dict, Block* picked_block,
                                        Growing_point* gp, Image& image)
   {
     one_column(dict, picked_block, gp, image);
@@ -300,10 +300,10 @@ namespace heuristic {
   }
 
   // DICT DELETION
-  void dict_deletion::deletion(Dictionary& dict)
-  {
-    while(dict.size() >= DICT_SIZE_LIMIT) {
-      dict.delete_entry();
-    }
+
+  void dict_deletion::deletion(Dictionary& dict) {
+      while (dict.size() >= DICT_SIZE_LIMIT) {
+          dict.delete_entry();
+      }
   }
 } // namespace heuristic
