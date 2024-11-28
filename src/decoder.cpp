@@ -41,15 +41,15 @@ Image Decoder::adaptive_vector_quantization(size_t width, size_t height)
   Image image(pixels, width, height);
 
   // Init growing points pool with [0, 0]
-  GP_pool gpp;
-  gpp.add(new Growing_point(0, 0));
+  auto* gpp = new GP_pool();
+  gpp->add(new Growing_point(0, 0));
 
   // Init Dict
   Dictionary* dict = dict_init_heur();
   dict->set_deletion_mode(deletion_heur);
 
-  while(gpp.size() > 0) {
-    GP_pool_entry* gp_p = growing_heur(gpp);
+  while(gpp->size() > 0) {
+    Growing_point* gp = growing_heur(gpp);
 
     auto bits_to_receive =
       static_cast<int8_t>(std::ceil(log2(static_cast<double>(dict->size()))));
@@ -60,13 +60,14 @@ Image Decoder::adaptive_vector_quantization(size_t width, size_t height)
       dict->deletion_handler->update(dict->get_entry_at(block_idx));
     }
     // Anchor b to the current gp, in order to reconstruct the output image
-    anchor_gp(gp_p->gp, b, image);
+    anchor_gp(gp, b, image);
 
-    dict_update_heur(*dict, b, gp_p->gp, image);
+    dict_update_heur(dict, b, gp, image);
     heuristic::dict_deletion::deletion(*dict);
-    growing_point_update_heur(image, gpp, gp_p);
+    growing_point_update_heur(image, gpp, gp);
   }
 
+  delete gpp;
   delete dict;
   return image;
 }

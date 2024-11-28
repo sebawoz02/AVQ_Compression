@@ -63,19 +63,6 @@ IO_Handler::IO_Handler(char* in_filename, char* out_filename)
     input_format = FORMAT_UNKNOWN;
   }
 
-  std::string output_filename(out_filename);
-  if(output_filename.ends_with(".tga"))
-  {
-    output_format = FORMAT_TGA;
-  }else if(output_filename.ends_with(".pgm"))
-  {
-    output_format = FORMAT_PGM;
-  }
-  else
-  {
-    output_format = FORMAT_UNKNOWN;
-  }
-
   in_stream = std::ifstream(in_filename);
   if(!in_stream.is_open()) {
     std::cerr << "Cannot open file: " << in_filename << std::endl;
@@ -86,6 +73,18 @@ IO_Handler::IO_Handler(char* in_filename, char* out_filename)
   if(out_filename == nullptr) {
     return;
   }
+    std::string output_filename(out_filename);
+    if(output_filename.ends_with(".tga"))
+    {
+        output_format = FORMAT_TGA;
+    }else if(output_filename.ends_with(".pgm"))
+    {
+        output_format = FORMAT_PGM;
+    }
+    else
+    {
+        output_format = FORMAT_UNKNOWN;
+    }
   out_stream = std::ofstream(out_filename);
   if(!out_stream.is_open()) {
     std::cerr << "Cannot open file: " << out_filename << std::endl;

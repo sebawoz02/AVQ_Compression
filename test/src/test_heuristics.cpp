@@ -251,42 +251,44 @@ static void test_dict_init()
 static void test_growing()
 {
   // {1, 2}, {3, 1}, {2, 1}, {0, 2}
-  GP_pool gpp;
+  auto* gpp = new GP_pool();
   auto gp1 = new Growing_point(1, 2);
   auto gp2 = new Growing_point(3, 1);
   auto gp3 = new Growing_point(2, 1);
   auto gp4 = new Growing_point(0, 2);
-  gpp.add(gp1);
-  gpp.add(gp2);
-  gpp.add(gp3);
-  gpp.add(gp4);
+  gpp->add(gp1);
+  gpp->add(gp2);
+  gpp->add(gp3);
+  gpp->add(gp4);
 
   // WAVE
   {
-    GP_pool_entry* gpp_entry = heuristic::growing::wave(gpp);
-    assert(gpp_entry != nullptr);
-    assert(gpp_entry->gp->x == 0);
-    assert(gpp_entry->gp->y == 2);
-    assert(gpp_entry->gp == gp4);
+    Growing_point* gp = heuristic::growing::wave(gpp);
+    assert(gp != nullptr);
+    assert(gp->x == 0);
+    assert(gp->y == 2);
+    assert(gp == gp4);
   }
 
   // DIAGONAL
   {
-    GP_pool_entry* gpp_entry = heuristic::growing::diagonal(gpp);
-    assert(gpp_entry != nullptr);
-    assert(gpp_entry->gp->x == 1);
-    assert(gpp_entry->gp->y == 2);
-    assert(gpp_entry->gp == gp1);
+    Growing_point* gp = heuristic::growing::diagonal(gpp);
+    assert(gp != nullptr);
+    assert(gp->x == 1);
+    assert(gp->y == 2);
+    assert(gp == gp1);
   }
 
   // LIFO
   {
-    GP_pool_entry* gpp_entry = heuristic::growing::lifo(gpp);
-    assert(gpp_entry != nullptr);
-    assert(gpp_entry->gp->x == 0);
-    assert(gpp_entry->gp->y == 2);
-    assert(gpp_entry->gp == gp4);
+    Growing_point* gp = heuristic::growing::lifo(gpp);
+    assert(gp != nullptr);
+    assert(gp->x == 0);
+    assert(gp->y == 2);
+    assert(gp == gp4);
   }
+
+  delete gpp;
 }
 
 static void test_gp_update()
@@ -322,22 +324,24 @@ static void test_gp_update()
     image.encoded[0][0] = true;
     image.encoded[1][0] = true;
 
-    GP_pool gpp;
+    auto* gpp = new GP_pool();
     auto* cur_gp = new Growing_point(1, 0);
     auto* obsolete_gp = new Growing_point(0, 0);
-    gpp.add(cur_gp);
-    gpp.add(obsolete_gp);
+    gpp->add(cur_gp);
+    gpp->add(obsolete_gp);
 
-    assert(gpp[0]->gp == cur_gp);
-    assert(gpp[1]->gp == obsolete_gp);
+    assert((*gpp)[0] == cur_gp);
+    assert((*gpp)[1] == obsolete_gp);
 
-    heuristic::gpp_update::first_from_left(image, gpp, gpp[0]);
+    heuristic::gpp_update::first_from_left(image, gpp, cur_gp);
 
-    assert(gpp.size() == 2);
-    assert(gpp[0]->gp->x == 2);
-    assert(gpp[0]->gp->y == 0);
-    assert(gpp[1]->gp->x == 0);
-    assert(gpp[1]->gp->y == 1);
+    assert(gpp->size() == 2);
+    assert((*gpp)[0]->x == 2);
+    assert((*gpp)[0]->y == 0);
+    assert((*gpp)[1]->x == 0);
+    assert((*gpp)[1]->y == 1);
+
+    delete gpp;
   }
 
   /**
@@ -375,22 +379,23 @@ static void test_gp_update()
     image.encoded[0][1] = true;
     image.encoded[0][2] = true;
 
-    GP_pool gpp;
+    auto* gpp = new GP_pool();
     auto* cur_gp = new Growing_point(0, 2);
     auto* another_gp = new Growing_point(1, 1);
-    gpp.add(cur_gp);
-    gpp.add(another_gp);
+    gpp->add(cur_gp);
+    gpp->add(another_gp);
 
-    assert(gpp[0]->gp == cur_gp);
-    assert(gpp[1]->gp == another_gp);
+    assert((*gpp)[0] == cur_gp);
+    assert((*gpp)[1] == another_gp);
 
-    heuristic::gpp_update::first_from_left(image, gpp, gpp[0]);
+    heuristic::gpp_update::first_from_left(image, gpp, cur_gp);
 
-    assert(gpp.size() == 2);
-    assert(gpp[0]->gp == another_gp);
-    assert(gpp[1]->gp->x == 1);
-    assert(gpp[1]->gp->y == 2);
+    assert(gpp->size() == 2);
+    assert((*gpp)[0] == another_gp);
+    assert((*gpp)[1]->x == 1);
+    assert((*gpp)[1]->y == 2);
 
+    delete gpp;
   }
 }
 
@@ -440,7 +445,7 @@ static void test_dict_update()
     auto* picked_block = new Block(1, 1, p);
     auto* gp = new Growing_point(1, 1);
 
-    heuristic::dict_update::one_row(*dict, picked_block, gp, image);
+    heuristic::dict_update::one_row(dict, picked_block, gp, image);
 
     assert(dict->size() == 257);
     assert((*dict)[256]->width == 1);
@@ -481,7 +486,7 @@ static void test_dict_update()
     auto* picked_block = new Block(1, 1, p);
     auto* gp = new Growing_point(1, 1);
 
-    heuristic::dict_update::one_column(*dict, picked_block, gp, image);
+    heuristic::dict_update::one_column(dict, picked_block, gp, image);
 
     assert(dict->size() == 257);
     assert((*dict)[256]->width == 2);

@@ -15,16 +15,16 @@ namespace heuristic {
   using idh_t = Dictionary* (*)();
 
   ///> Growing Point Pool Update heuristic function type
-  using gpuh_t = void (*)(Image&, GP_pool&, GP_pool_entry*);
+  using gpuh_t = void (*)(Image&, GP_pool*, Growing_point*);
 
   ///> Growing heuristic function type
-  using gh_t = GP_pool_entry* (*)(GP_pool&);
+  using gh_t = Growing_point* (*)(GP_pool*);
 
   ///> Dictionary Update heuristic function type
-  using duh_t = void (*)(Dictionary&, Block*, Growing_point*, Image&);
+  using duh_t = void (*)(Dictionary*, Block*, Growing_point*, Image&);
 
   ///> Dictionary entry deletion heuristic function type
-  using dh_t = void (*)(Dictionary&);
+  using dh_t = void (*)(Dictionary*);
 
   namespace match {
     void mse(Dictionary& dict, double tolerance, Image& image,
@@ -43,23 +43,23 @@ namespace heuristic {
   }
 
   namespace gpp_update {
-    void first_from_left(Image& image, GP_pool& growing_points,
-                         GP_pool_entry* cur_gp);
+    void first_from_left(Image& image, GP_pool* growing_points,
+                         Growing_point* cur_gp);
   }
 
   namespace growing {
-    GP_pool_entry* wave(GP_pool& gp_pool);
-    GP_pool_entry* diagonal(GP_pool& gp_pool);
-    GP_pool_entry* lifo(GP_pool& gp_pool);
+    Growing_point* wave(GP_pool* gp_pool);
+    Growing_point* diagonal(GP_pool* gp_pool);
+    Growing_point* lifo(GP_pool* gp_pool);
     // circular coverage
   } // namespace growing
 
   namespace dict_update {
-    void one_column(Dictionary& dict, Block* picked_block, Growing_point* gp,
+    void one_column(Dictionary* dict, Block* picked_block, Growing_point* gp,
                     Image& image);
-    void one_row(Dictionary& dict, Block* picked_block, Growing_point* gp,
+    void one_row(Dictionary* dict, Block* picked_block, Growing_point* gp,
                  Image& image);
-    void one_column_one_row(Dictionary& dict, Block* picked_block,
+    void one_column_one_row(Dictionary* dict, Block* picked_block,
                             Growing_point* gp, Image& image);
   } // namespace dict_update
 
