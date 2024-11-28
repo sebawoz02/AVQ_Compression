@@ -119,7 +119,3 @@ void GP_pool::remove(GP_pool_entry* entry) {
     delete entry;
     _size--;
 }
-
-GP_pool_entry *GP_pool::first() {
-   return head;
-}

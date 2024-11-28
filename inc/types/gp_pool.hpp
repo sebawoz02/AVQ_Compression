@@ -35,7 +35,6 @@ typedef struct GP_pool {
   void remove_obsolete(Image& image);
 
   [[__nodiscard__]] GP_pool_entry* last();
-  [[__nodiscard__]] GP_pool_entry* first();
   [[__nodiscard__]] uint8_t size() const;
 
 private:

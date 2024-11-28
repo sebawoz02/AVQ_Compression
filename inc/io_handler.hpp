@@ -36,7 +36,7 @@ typedef struct IO_Handler {
   void set_print_summary(bool ps);
 
   File_Format_E input_format;   ///> Input file format
-  File_Format_E output_format;  ///> Output file format
+  File_Format_E output_format;  ///> Input file format
 private:
   uint8_t in_buffer;            ///> Input buffer - used to read single bits
   uint8_t out_buffer;           ///> Output buffer - used to write single bits

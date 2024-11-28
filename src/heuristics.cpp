@@ -197,28 +197,28 @@ namespace heuristic {
   // GROWING
   GP_pool_entry* growing::wave(GP_pool& gp_pool)
   {
-    GP_pool_entry* best = gp_pool.first();
-    GP_pool_entry* cur = best->next;
-    while(cur != nullptr) {
+    GP_pool_entry* best = gp_pool[0];
+    uint8_t gpp_size = gp_pool.size();
+    for(uint8_t i = 1; i < gpp_size; i++) {
+      GP_pool_entry* cur = gp_pool[i];
       if(best->gp->x + best->gp->y > cur->gp->x + cur->gp->y) {
         best = cur;
       }
-      cur = cur->next;
     }
 
     return best;
   }
 
-  GP_pool_entry* growing::diagonal(GP_pool& gp_pool)
+    GP_pool_entry* growing::diagonal(GP_pool& gp_pool)
   {
-    GP_pool_entry* best = gp_pool.first();
-    GP_pool_entry* cur = best->next;
-    while(cur != nullptr) {
-      if(abs((int)best->gp->x - (int)best->gp->y) >
-         abs((int)cur->gp->x - (int)cur->gp->y)) {
-        best = cur;
+
+      GP_pool_entry* best = gp_pool[0];
+      uint8_t gpp_size = gp_pool.size();
+      for(uint8_t i = 1; i < gpp_size; i++) {
+        GP_pool_entry* cur = gp_pool[i];
+        if(abs((int)best->gp->x - (int)best->gp->y) > abs((int)cur->gp->x - (int)cur->gp->y)) {
+          best = cur;
       }
-      cur = cur->next;
     }
 
     return best;
