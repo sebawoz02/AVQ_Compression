@@ -1,14 +1,13 @@
 #include <types/gp_pool.hpp>
-#include <stdexcept>
 
 
 typedef struct GP_pool_entry {
-  explicit GP_pool_entry(Growing_point* _gp, GP_pool_entry* _prev): next(nullptr), prev(_prev), gp(_gp){};
-  ~GP_pool_entry();
+    explicit GP_pool_entry(Growing_point* _gp, GP_pool_entry* _prev): next(nullptr), prev(_prev), gp(_gp){};
+    ~GP_pool_entry();
 
-  GP_pool_entry* next;
-  GP_pool_entry* prev;
-  Growing_point* gp;
+    GP_pool_entry* next;
+    GP_pool_entry* prev;
+    Growing_point* gp;
 } GP_pool_entry;
 
 GP_pool::~GP_pool()
@@ -21,27 +20,19 @@ GP_pool::~GP_pool()
   }
 }
 
-Growing_point* GP_pool::operator[](uint8_t index) const
+Growing_point* GP_pool::operator[](size_t index) const
 {
-  if(index >= _size)
-  {
-    throw std::out_of_range("GPP index out of range");
-  }
+  size_t counter = 0;
+  GP_pool_entry* ptr = head;
 
-  GP_pool_entry* entry;
-  if(index > _size / 2) {
-    entry = tail;
-    for(uint8_t i = _size - 1; i > index; i--) {
-      entry = entry->prev;
-    }
-  } else {
-    entry = head;
-    for(uint8_t i = 0; i < index; i++) {
-      entry = entry->next;
-    }
+  while(counter != index && ptr != nullptr) {
+    ptr = ptr->next;
+    counter++;
   }
-  return entry->gp;
-
+  if(ptr == nullptr) {
+    return nullptr;
+  }
+  return ptr->gp;
 }
 
 bool GP_pool::contains(size_t x, size_t y) const
@@ -75,7 +66,7 @@ void GP_pool::remove(Growing_point* gp_old)
 {
   if(head == nullptr)
   {
-    return;
+      return;
   }
 
   if(head->gp == gp_old) {
@@ -97,7 +88,7 @@ void GP_pool::remove(Growing_point* gp_old)
 
   if(ptr == nullptr)
   {
-    return;
+      return;
   }
 
   if(ptr == tail)
@@ -144,7 +135,7 @@ void GP_pool::remove_obsolete(Image& image)
         cur = nullptr;
       } else
       {
-        cur = cur->next;
+          cur = cur->next;
       }
       delete to_rm;
       _size--;
@@ -154,7 +145,7 @@ void GP_pool::remove_obsolete(Image& image)
   }
 }
 
-uint8_t GP_pool::size() const
+size_t GP_pool::size() const
 {
   return _size;
 }
