@@ -1,5 +1,6 @@
 #include <cmath>
 #include <heuristics.hpp>
+#include <iostream>
 
 namespace heuristic {
 
@@ -11,17 +12,17 @@ namespace heuristic {
 
   static double _mse(Block* b1, Block* b2)
   {
-    double square_error = 0.0;
-    size_t size = b1->width * b1->height;
+      double square_error = 0.0;
+      size_t total_pixels = b1->width * b1->height;
 
-    for(size_t i = 0; i < b1->width; ++i) {
-      for(size_t j = 0; j < b1->height; ++j) {
-        auto diff = static_cast<int16_t>(b1->pixels[i][j] - b2->pixels[i][j]);
-        square_error += (diff * diff) / static_cast<double>(size);
+      for (size_t i = 0; i < b1->height; ++i) {
+          for (size_t j = 0; j < b1->width; ++j) {
+              int diff = static_cast<int>(b1->pixels[j][i]) - static_cast<int>(b2->pixels[j][i]);
+              square_error += diff * diff;
+          }
       }
-    }
 
-    return square_error;
+      return square_error / total_pixels;
   }
 
   static double _max_se(Block* b1, Block* b2)

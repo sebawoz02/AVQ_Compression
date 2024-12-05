@@ -85,14 +85,11 @@ int main(int argc, char** argv)
   long double encoded_entropy =
     calculate_entropy(encoded_freq_dict, encoded_filesize);
   auto ent_increase = static_cast<double>(encoded_entropy * 100.0 / og_entropy - 100.0);
-  long double size_increase =
-    static_cast<long double>(encoded_filesize) / og_filesize * 100.0 - 100.0;
 
   std::cout << "====== Original vs Encoded ======" << std::endl;
   std::cout << "original filesize: \t" << og_filesize << " B" << std::endl;
-  std::cout << "encoded filesize: \t" << encoded_filesize << " B" << " ("
-            << ((size_increase >= 0) ? "+" : "") << size_increase << "%)"
-            << std::endl;
+  std::cout << "encoded filesize: \t" << encoded_filesize << std::endl;
+  std::cout << "CR:" << static_cast<double>(og_filesize)/ static_cast<double>(encoded_filesize) << std::endl;
   std::cout << "original entropy: \t" << og_entropy << std::endl;
   std::cout << "encoded entropy: \t" << encoded_entropy << " ("
             << ((ent_increase >= 0) ? "+" : "") << ent_increase << "%)"
@@ -107,19 +104,21 @@ int main(int argc, char** argv)
   // 2. PSNR
   // 2. SSIM
 
-  TGA_header decoded_header{};
-  std::vector<std::vector<Pixel>> decoded_image;
+ TGA_header decoded_header{};
+ std::vector<std::vector<Pixel>> decoded_image;
 
-  decoded.get_header_tga(&decoded_header);
-  decoded.get_image_rgb(decoded_header.width, decoded_header.height,
-                    &decoded_image);
+ decoded.get_header_tga(&decoded_header);
+ decoded.get_image_rgb(decoded_header.width, decoded_header.height,
+                       &decoded_image);
 
   double mse = calculate_mse(og_image, decoded_image);
   double psnr = calculate_psnr(mse);
+
   double ssim_r = calculate_ssim_channel(og_image, decoded_image, 'r');
   double ssim_g = calculate_ssim_channel(og_image, decoded_image, 'g');
   double ssim_b = calculate_ssim_channel(og_image, decoded_image, 'b');
   double ssim = calculate_ssim(ssim_r, ssim_g, ssim_b);
+
 
   std::cout << "====== Original vs Decoded ======" << std::endl;
   std::cout << "MSE (Mean Square Error): \t\t" << mse << std::endl;

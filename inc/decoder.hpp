@@ -15,6 +15,23 @@ typedef struct Decoder {
       growing_point_update_heur(gpuh), growing_heur(gh), dict_update_heur(duh),
       deletion_heur(dh){};
 
+  /**
+  * @brief Decodes a compressed image into a 2D matrix of pixels.
+  *
+  * @param width The width of the output image in pixels.
+  * @param height The height of the output image in pixels.
+  * @return std::vector<std::vector<Pixel>> A 2D vector representing the decoded image,
+  *                                         where each element is a Pixel object.
+  *
+  * @details
+  * This function performs the decoding process for an image that has been
+  * compressed using the Adaptive Vector Quantization (AVQ) algorithm.
+  * It reconstructs the original image based on the compressed data, returning
+  * the result as a 2D matrix of Pixel objects. The width and height parameters
+  * specify the dimensions of the output image, which must correspond to the
+  * original dimensions of the image before compression.
+  *
+  */
   std::vector<std::vector<Pixel>> decode(size_t width, size_t height);
 
 private:

@@ -96,7 +96,6 @@ void IO_Handler::get_image_rgb(size_t width, size_t height,
 {
   std::vector<std::vector<Pixel>> _image(std::vector<std::vector<Pixel>>(
     width, std::vector<Pixel>(height, Pixel(0, 0, 0))));
-
   for(size_t i = 0; i < width; i++) {
     for(size_t j = 0; j < height; j++) {
       in_stream.read(reinterpret_cast<char*>(&_image[i][j]), 3);

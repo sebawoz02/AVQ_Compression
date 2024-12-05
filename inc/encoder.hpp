@@ -18,6 +18,19 @@ typedef struct Encoder {
       growing_point_update_heur(gpuh), growing_heur(gh), dict_update_heur(duh),
       deletion_heur(dh), tolerance(t){};
 
+  /**
+  * @brief Encodes an image using the Adaptive Vector Quantization (AVQ) algorithm.
+  *
+  * @param image The input image to be encoded, represented as an `Image` object.
+  *
+  * @details
+  * This function performs the encoding process on the provided image. The Adaptive Vector
+  * Quantization (AVQ) algorithm compresses the image data by dividing it into smaller blocks
+  * and mapping them to representative vectors in a dictionary. The resulting compressed
+  * representation reduces the storage requirements while preserving visual quality based on
+  * the chosen compression parameters.
+  *
+  */
   void encode(Image image);
 
 private:
@@ -27,7 +40,7 @@ private:
   heuristic::gpuh_t growing_point_update_heur;  ///> Growing Point Pool Update heuristic
   heuristic::gh_t growing_heur;                 ///> Growing heuristic
   heuristic::duh_t dict_update_heur;            ///> Dictionary Update heuristic
-  Deletion_Mode deletion_heur;                ///> Dictionary entry deletion heuristic
+  Deletion_Mode deletion_heur;                  ///> Dictionary entry deletion heuristic
 
   double tolerance;                             ///> Information loss toleration
 } Encoder;
